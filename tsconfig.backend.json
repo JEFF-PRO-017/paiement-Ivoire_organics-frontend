@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",                // moderne pour Node
+    "module": "commonjs",              // nécessaire pour Node
+    "rootDir": "src/backend",          // où se trouvent les fichiers backend TS
+    "outDir": "build/backend",         // où compiler les fichiers JS
+    "esModuleInterop": true,           // importer modules npm proprement
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/backend/**/*"]
+}
