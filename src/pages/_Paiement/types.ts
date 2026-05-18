@@ -1,12 +1,12 @@
 export enum StatutPortefeuille {
-  PAYE        = 'PAYE',
-  IMPAYE      = 'IMPAYE',
+  PAYE = 'PAYE',
+  IMPAYE = 'IMPAYE',
   CONFIRME_RH = 'CONFIRME_RH',
-  EN_ATTENTE  = 'EN_ATTENTE',
+  EN_ATTENTE = 'EN_ATTENTE',
 }
 
 export enum StatutEmploye {
-  ACTIF   = 'ACTIF',
+  ACTIF = 'ACTIF',
   INACTIF = 'INACTIF',
 }
 
@@ -48,10 +48,21 @@ export interface HistoriquePaiement {
   date_paiement: string;
   montant_total: number;
 }
+export interface HistoriquePaiement {
+  id: number;
+  date_debut: Date;
+  date_fin: Date;
+  jours: number;
+  montant: number;
+  statut: StatutPortefeuille;
+
+}
 
 export interface Paginated<T> {
-  data: T[];
-  total: number;
+  results: T[];
+  count: number;
   page: number;
   limit: number;
+  next: string;
+  previous: string;
 }

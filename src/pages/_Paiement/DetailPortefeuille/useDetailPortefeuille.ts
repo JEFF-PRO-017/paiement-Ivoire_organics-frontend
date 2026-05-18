@@ -16,9 +16,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-import { Portefeuille, StatutPortefeuille } from '../types';
+import { HistoriquePaiement, Portefeuille, StatutPortefeuille } from '../types';
 import { STATUT_CLR }                       from './constants';
-import { HistoriquePaiement }               from './fakeData';
 import { portefeuilleService }              from './portefeuilleService';
 
 // ── Types exposés ─────────────────────────────────────────────────────────────
@@ -33,6 +32,7 @@ export interface CalendarEvent {
   allDay:    boolean;
   className: string;
 }
+
 
 export interface UseDetailPortefeuilleReturn {
   // Data
@@ -72,8 +72,7 @@ export const useDetailPortefeuille = (): UseDetailPortefeuilleReturn => {
   // ── Chargement initial ─────────────────────────────────────────────────────
 
   useEffect(() => {
-    // const pfId = Number(id);
-    const pfId = 1;
+    const pfId = Number(id);
     
     if (isNaN(pfId)) {
       toast.error('Identifiant de portefeuille invalide');
