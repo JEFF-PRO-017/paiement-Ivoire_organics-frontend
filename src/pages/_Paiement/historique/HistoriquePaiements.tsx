@@ -1,19 +1,20 @@
 import React from 'react';
 import { Badge, Card, CardBody, CardHeader, Container } from 'reactstrap';
 
-import StatsWidgets              from './StatsWidgets';
-import FiltresHistorique         from './FiltresHistorique';
-import TableauHistorique         from './TableauHistorique';
+import StatsWidgets from './StatsWidgets';
+import FiltresHistorique from './FiltresHistorique';
+import TableauHistorique from './TableauHistorique';
 import { useHistoriquePaiements } from './useHistoriquePaiements';
 
 const HistoriquePaiements: React.FC = () => {
   document.title = 'Historique paiements | Velzon';
 
   const {
-    paginated, filtered, stats, isLoading,
+    rows, stats, isLoading,          // ← plus paginated/filtered
     sorting, onSortingChange,
     filtres, setSearch, setDept, setDateRange, handleChip, handleReset,
-    page, pageSize, totalPages, setPage, setPageSize,
+    page, pageSize, totalPages, totalCount,   // ← totalCount ajouté
+    setPage, setPageSize,
     handleExportCSV, handleExportPDF, handleExportPDFLigne,
   } = useHistoriquePaiements();
 
@@ -30,7 +31,7 @@ const HistoriquePaiements: React.FC = () => {
                 <div className="rounded-1" style={{ width: 4, height: 18, background: 'var(--vz-primary)' }} />
                 <h4 className="card-title mb-0">Historique des paiements</h4>
                 <Badge color="primary" className="bg-primary-subtle text-primary">
-                  {filtered.length}
+                  {totalCount}  {/* ← total renvoyé par le back */}
                 </Badge>
               </div>
 
@@ -38,14 +39,14 @@ const HistoriquePaiements: React.FC = () => {
                 <button
                   className="btn btn-soft-success btn-sm d-flex align-items-center gap-1"
                   onClick={handleExportCSV}
-                  disabled={isLoading || filtered.length === 0}
+                  disabled={isLoading || totalCount === 0}
                 >
                   <i className="ri-file-excel-line" />Exporter CSV
                 </button>
                 <button
                   className="btn btn-soft-danger btn-sm d-flex align-items-center gap-1"
                   onClick={handleExportPDF}
-                  disabled={isLoading || filtered.length === 0}
+                  disabled={isLoading || totalCount === 0}
                 >
                   <i className="ri-file-pdf-line" />Exporter PDF
                 </button>
@@ -69,8 +70,7 @@ const HistoriquePaiements: React.FC = () => {
                 </div>
               ) : (
                 <TableauHistorique
-                  paginated={paginated}
-                  filtered={filtered}
+                  data={rows}
                   page={page}
                   pageSize={pageSize}
                   totalPages={totalPages}
@@ -79,6 +79,7 @@ const HistoriquePaiements: React.FC = () => {
                   onPageChange={setPage}
                   onPageSizeChange={setPageSize}
                   onExportPDF={handleExportPDFLigne}
+                  totalCount={totalCount}
                 />
               )}
             </CardBody>

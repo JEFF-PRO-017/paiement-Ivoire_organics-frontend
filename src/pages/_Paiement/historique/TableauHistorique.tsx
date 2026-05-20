@@ -12,8 +12,8 @@ import { STATUT_CLR, fmt, fmtDate } from './historique.constants';
 import Pagination from 'pages/Components/Pagination';
 
 interface Props {
-  paginated:       LignePaiement[];
-  filtered:        LignePaiement[];
+  data:       LignePaiement[];
+  totalCount: number;
   page:            number;
   pageSize:        number;
   totalPages:      number;
@@ -27,39 +27,39 @@ interface Props {
 const col = createColumnHelper<LignePaiement>();
 
 const TableauHistorique: React.FC<Props> = ({
-  paginated, filtered, page, pageSize,
+  data, totalCount, page, pageSize, totalPages, 
   sorting, onSortingChange, onPageChange, onPageSizeChange, onExportPDF,
 }) => {
-
+  console.log('Rerender TableauHistorique', { data, totalCount, page, pageSize, totalPages, sorting });
   const columns = useMemo(() => [
-    col.accessor('date', {
+    col.accessor('date_paiement', {
       header: 'Date',
       cell: ({ getValue }) => <span className="fw-medium">{fmtDate(getValue())}</span>,
     }),
-    col.accessor('employe_nom', {
+    col.accessor('employe__nom_complet', {
       header: 'Employé',
       cell: ({ row }) => (
         <div>
-          <div className="fw-medium">{row.original.employe_nom}</div>
-          <small className="text-muted">{row.original.employe_id}</small>
+          <div className="fw-medium">{row.original.employe__nom_complet}</div>
+          <small className="text-muted">{row.original.employe__id}</small>
         </div>
       ),
     }),
-    col.accessor('departement', {
+    col.accessor('employe__departement', {
       header: 'Département',
       cell: ({ getValue }) => <span className="text-muted">{getValue()}</span>,
     }),
-    col.accessor('jours', {
+    col.accessor('nombre_jours', {
       header: 'Jours payés',
       cell: ({ getValue }) => (
         <Badge color="warning" className="bg-warning-subtle text-warning">{getValue()} j</Badge>
       ),
     }),
-    col.accessor('montant', {
+    col.accessor('montant_total', {
       header: 'Montant',
       cell: ({ getValue }) => <span className="fw-medium text-success">{fmt(getValue())}</span>,
     }),
-    col.accessor('statut', {
+    col.accessor('portefeuille__statut', {
       header: 'Statut',
       cell: ({ getValue }) => {
         const c = STATUT_CLR[getValue()];
@@ -72,7 +72,7 @@ const TableauHistorique: React.FC<Props> = ({
       cell: ({ row }) => (
         <div className="d-flex gap-1">
           <Link
-            to={`/paiements/portefeuille/${row.original.id}`}
+            to={`/paiements/${row.original.id}`}
             className="btn btn-soft-primary btn-sm d-flex align-items-center gap-1"
           >
             <i className="ri-eye-line" />Détail
@@ -83,7 +83,7 @@ const TableauHistorique: React.FC<Props> = ({
   ], [onExportPDF]);
 
   const table = useReactTable({
-    data: paginated,
+    data: data??[],  // ← data au lieu de paginated
     columns,
     state: { sorting },
     onSortingChange,
@@ -92,6 +92,7 @@ const TableauHistorique: React.FC<Props> = ({
     getRowId: row => String(row.id),
     manualPagination: true,
   });
+
 
   return (
     <>
@@ -118,7 +119,7 @@ const TableauHistorique: React.FC<Props> = ({
             ))}
           </thead>
           <tbody>
-            {table.getRowModel().rows.length === 0 ? (
+            {table.getRowModel().rows?.length === 0 ? (
               <tr>
                 <td colSpan={7} className="text-center py-5 text-muted">
                   <i className="ri-file-search-line display-6 d-block mb-2" />
@@ -140,7 +141,7 @@ const TableauHistorique: React.FC<Props> = ({
 
       <Pagination
         page={page}
-        total={filtered.length}
+        total={totalCount}
         pageSize={pageSize}
         onPageChange={onPageChange}
         onPageSizeChange={onPageSizeChange}

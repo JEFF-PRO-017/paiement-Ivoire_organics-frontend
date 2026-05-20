@@ -72,7 +72,6 @@ export const useDetailPortefeuille = (): UseDetailPortefeuilleReturn => {
   // ── Chargement initial ─────────────────────────────────────────────────────
 
   useEffect(() => {
-    debugger
     const pfId = Number(id);
     
     if (isNaN(pfId)) {

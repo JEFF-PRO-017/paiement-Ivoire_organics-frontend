@@ -108,7 +108,6 @@ export const useAuth = (): UseAuthReturn => {
   // ── Login ──────────────────────────────────────────────────────────────────
 
   const login = async (email: string, password: string): Promise<void> => {
-    debugger;
     setIsLoading(true);
     setError(null);
     try {

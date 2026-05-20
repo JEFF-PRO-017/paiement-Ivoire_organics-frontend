@@ -10,13 +10,13 @@ import { StatutPortefeuille } from '../types';
 
 export interface LignePaiement {
   id:          number;
-  date:        string;
-  employe_nom: string;
-  employe_id:  string;
-  departement: string;
-  jours:       number;
-  montant:     number;
-  statut:      StatutPortefeuille;
+  employe__nom_complet: string;
+  employe__id:  string;
+  employe__departement: string;
+  nombre_jours:       number;
+  montant_total:     number;
+  portefeuille__statut:      StatutPortefeuille;
+  date_paiement: string;
 }
 
 export interface StatsHistorique {

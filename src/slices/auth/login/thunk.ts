@@ -81,7 +81,6 @@ export const socialLogin = (type: any, history: any) => async (dispatch: any) =>
     //  else {
     //   response = postSocialLogin(data);
     // }
-    debugger
     const fakeGoogleResponse = {
       uid: "google_uid_123456789",
       displayName: "Jean Dupont",
