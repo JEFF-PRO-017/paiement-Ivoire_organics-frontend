@@ -29,13 +29,13 @@ export const paiementService = {
     return data;
   },
 
-  async getEnAttente(page = 1, limit = 5): Promise<Paginated<Portefeuille>> {
-    const { data } = await api.get(`/portefeuilles/?statut=EN_ATTENTE&page=${page}&limit=${limit}`);
+  async getEnAttente(page = 1, pageSize = 5): Promise<Paginated<Portefeuille>> {
+    const { data } = await api.get(`/portefeuilles/?statut=EN_ATTENTE&page=${page}&limit=${pageSize}`);
     return data;
   },
 
-  async getImpayes(page = 1, limit = 5): Promise<Paginated<Portefeuille>> {
-    const { data } = await api.get(`/portefeuilles/?statut=IMPAYE&page=${page}&limit=${limit}`);
+  async getImpayes(page = 1, pageSize = 5): Promise<Paginated<Portefeuille>> {
+    const { data } = await api.get(`/portefeuilles/?statut=IMPAYE&page=${page}&limit=${pageSize}`);
     return data;
   },
 

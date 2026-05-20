@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Col, Container, Row } from 'reactstrap';
-import BreadCrumb from '../../Components/Common/BreadCrumb';
 import { ToastContainer } from 'react-toastify';
 
 import Widgets from './Widgets';
@@ -12,17 +11,14 @@ import { useDashboard, SectionKey } from './useDashboard';
 
 // ─── Styles injectés une seule fois dans le <head> ───────────────────────────
 const STYLES = `
-  /* Croix — invisible par défaut, visible au survol de la section */
   .section-wrapper .btn-close-section { opacity: 0; transition: opacity 0.2s ease; }
   .section-wrapper:hover .btn-close-section { opacity: 1; }
 
-  /* Animations entrée / sortie */
   .section-fade-in  { animation: secIn  0.35s ease forwards; }
   .section-fade-out { animation: secOut 0.28s ease forwards; }
   @keyframes secIn  { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
   @keyframes secOut { from { opacity:1; transform:translateY(0); }   to { opacity:0; transform:translateY(-10px); } }
 
-  /* Flatpickr — jours cumulés en or */
   .flatpickr-day.jour-cumule,
   .flatpickr-day.jour-cumule:hover {
     background: #c9a227 !important;
@@ -65,41 +61,32 @@ const LABELS: Record<SectionKey, string> = {
 const DashboardPaiement: React.FC = () => {
   document.title = 'Paiements | ';
 
-  // Injection du style une seule fois au montage
   useEffect(() => { injectStyles(); }, []);
 
   const {
     stats, jours, historique,
     enAttente, impayes,
-    pageEA, pageIMP,
+    pageEA,  pageSizeEA,
+    pageIMP, pageSizeIMP,
     visible, toggle, hide,
     allHidden,
-    handlePageEA, handlePageIMP, handleConfirmerRH,
+    handlePageEA,  handlePageSizeEA,
+    handlePageIMP, handlePageSizeIMP,
+    handleConfirmerRH,
   } = useDashboard();
 
   const [ws1_s3, setWs1_s3] = useState(8);
-  const [ws2, setWs2] = useState(4);
+  const [ws2,    setWs2]    = useState(4);
 
   useEffect(() => {
-    const s2Visible = visible.s2 === true;
+    const s2Visible   = visible.s2 === true;
     const leftVisible = visible.s1 === true || visible.s3 === true;
 
-    if (!s2Visible && !leftVisible) {
-      // les deux colonnes masquées → allHidden gère l'affichage
-      setWs1_s3(0); setWs2(0); return;
-    }
-    if (!s2Visible) {
-      // pas de calendrier → colonne gauche prend tout
-      setWs1_s3(12); setWs2(0); return;
-    }
-    if (!leftVisible) {
-      // pas de gauche → calendrier prend tout
-      setWs1_s3(0); setWs2(12); return;
-    }
-    // les deux visibles → layout 8/4
+    if (!s2Visible && !leftVisible) { setWs1_s3(0); setWs2(0);  return; }
+    if (!s2Visible)                 { setWs1_s3(12); setWs2(0); return; }
+    if (!leftVisible)               { setWs1_s3(0); setWs2(12); return; }
     setWs1_s3(8); setWs2(4);
   }, [visible]);
-
 
   const hiddenKeys = (Object.keys(visible) as SectionKey[]).filter(k => visible[k] === false);
 
@@ -107,7 +94,6 @@ const DashboardPaiement: React.FC = () => {
     <React.Fragment>
       <div className="page-content">
         <Container fluid>
-          {/* <BreadCrumb title="Gestion des paiements" pageTitle="Dashboards" /> */}
 
           {/* Barre restauration */}
           {hiddenKeys.length > 0 && (
@@ -158,7 +144,9 @@ const DashboardPaiement: React.FC = () => {
                     <TableauEnAttente
                       data={enAttente}
                       page={pageEA}
+                      pageSize={pageSizeEA}
                       onPageChange={handlePageEA}
+                      onPageSizeChange={handlePageSizeEA}
                       onConfirmerRH={handleConfirmerRH}
                     />
                   </Row>
@@ -168,7 +156,7 @@ const DashboardPaiement: React.FC = () => {
             </Col>
 
             <Col xxl={ws2}>
-              {/* Section 2 — Calendrier col-xxl-4 */}
+              {/* Section 2 — Calendrier */}
               <SectionWrapper
                 sectionKey="s2" label="Calendrier"
                 visible={visible.s2} onClose={hide}
@@ -191,7 +179,9 @@ const DashboardPaiement: React.FC = () => {
                 <TableauImpayes
                   data={impayes}
                   page={pageIMP}
+                  pageSize={pageSizeIMP}
                   onPageChange={handlePageIMP}
+                  onPageSizeChange={handlePageSizeIMP}
                 />
               )}
             </SectionWrapper>
@@ -200,7 +190,6 @@ const DashboardPaiement: React.FC = () => {
         </Container>
       </div>
 
-      {/* Toast — sans import CSS */}
       <ToastContainer position="top-right" autoClose={3000} />
     </React.Fragment>
   );

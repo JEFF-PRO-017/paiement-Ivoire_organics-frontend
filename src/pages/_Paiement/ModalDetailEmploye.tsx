@@ -5,6 +5,7 @@ import {
   Button, Badge, Row, Col,
 } from 'reactstrap';
 import { Portefeuille, StatutEmploye } from './types';
+import { Link } from 'react-router-dom';
 
 interface Props {
   portefeuille: Portefeuille | null;
@@ -14,12 +15,12 @@ interface Props {
 }
 
 const ModalDetailEmploye: React.FC<Props> = ({ portefeuille, isOpen, toggle, onConfirmerRH }) => {
-  const p   = portefeuille;
+  const p = portefeuille;
   const emp = p?.employe;
 
-  const initiales  = emp?.nom_complet.split(' ').map(n => n[0]).slice(0, 2).join('') ?? '';
-  const montantDu  = p ? p.nombre_jours_impayes * p.montant_journalier : 0;
-  const fmt        = (n: number) => n.toLocaleString('fr-FR') + ' F';
+  const initiales = emp?.nom_complet.split(' ').map(n => n[0]).slice(0, 2).join('') ?? '';
+  const montantDu = p ? p.nombre_jours_impayes * p.montant_journalier : 0;
+  const fmt = (n: number) => n.toLocaleString('fr-FR') + ' F';
 
   return (
     <Modal isOpen={isOpen} toggle={toggle} centered size="md" backdrop="static">
@@ -50,7 +51,7 @@ const ModalDetailEmploye: React.FC<Props> = ({ portefeuille, isOpen, toggle, onC
       {p && (
         <ModalBody className="pt-2">
 
-          {/* KPIs 2×2 — bg-*-subtle Velzon */}
+          {/* KPIs 2×2 — bg-*-subtle  */}
           <Row className="g-2 mb-4">
             <Col xs={6}>
               <div className="p-3 bg-warning-subtle rounded-2 text-center">
@@ -113,6 +114,9 @@ const ModalDetailEmploye: React.FC<Props> = ({ portefeuille, isOpen, toggle, onC
 
       <ModalFooter className="border-0 pt-0">
         <Button color="light" onClick={toggle}>Fermer</Button>
+        <Link to={p ? `/paiement/${p.id}` : '#'} className="btn btn-soft-primary d-flex align-items-center gap-1">
+          <i className="ri-eye-line" />Voir le portefeuille
+        </Link>
         {onConfirmerRH && p && (
           <Button color="success" onClick={() => { onConfirmerRH(p.id); toggle(); }}>
             <i className="ri-check-line align-middle me-1" />

@@ -112,7 +112,7 @@ const EmployeSidebar: React.FC<Props> = ({ pf, loading, onOuvrirEmpreinte, onRes
                   </button>
                 )}
 
-                {pf.statut === StatutPortefeuille.CONFIRME_RH && (
+                {pf.statut === StatutPortefeuille.IMPAYE && (
                   <button
                     className="btn btn-ghost-primary d-flex align-items-center gap-2 p-2 rounded-2 w-100 text-start"
                     onClick={() => onOuvrirEmpreinte('marquer_paye')}

@@ -1,32 +1,32 @@
 import React, { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
 import { Card, CardBody, CardHeader, Col, Badge } from 'reactstrap';
 import {
   useReactTable, getCoreRowModel, flexRender, createColumnHelper,
 } from '@tanstack/react-table';
 import { Paginated, Portefeuille } from './types';
 import ModalDetailEmploye from './ModalDetailEmploye';
+import Pagination from 'pages/Components/Pagination';
+import { Link } from 'react-router-dom';
 
 interface Props {
-  data?:        Paginated<Portefeuille>; // optionnel — undefined pendant le chargement SWR
-  page:         number;
-  onPageChange: (p: number) => void;
+  data?:            Paginated<Portefeuille>;
+  page:             number;
+  pageSize:         number;
+  onPageChange:     (p: number) => void;
+  onPageSizeChange: (size: number) => void;
 }
 
 const col = createColumnHelper<Portefeuille>();
 const fmt = (n: number) => n.toLocaleString('fr-FR') + ' F';
 
-const TableauImpayes: React.FC<Props> = ({ data, page, onPageChange }) => {
+const TableauImpayes: React.FC<Props> = ({
+  data, page, pageSize, onPageChange, onPageSizeChange,
+}) => {
   const [modal, setModal] = useState<Portefeuille | null>(null);
 
-  // ── Guards — data peut être undefined pendant le chargement SWR ──────────
-  const rows       = data?.results  ?? [];
-  const total      = data?.count ?? 0;
-  const limit      = data?.limit ?? 5;
-  const totalPages = Math.max(1, Math.ceil(total / limit));
-  const isEmpty    = rows.length === 0;
-  const debut      = total === 0 ? 0 : (page - 1) * limit + 1;
-  const fin        = Math.min(page * limit, total);
+  const rows    = data?.results ?? [];
+  const total   = data?.count   ?? 0;
+  const isEmpty = rows.length === 0;
 
   const columns = useMemo(() => [
     col.accessor(r => r.employe?.nom_complet, {
@@ -38,10 +38,14 @@ const TableauImpayes: React.FC<Props> = ({ data, page, onPageChange }) => {
         </button>
       ),
     }),
-    col.accessor(r => r.employe?.departement, { id: 'dept', header: 'Département',
-      cell: ({ getValue }) => <span className="text-muted">{getValue() ?? '—'}</span> }),
-    col.accessor(r => r.employe?.site_travail, { id: 'site', header: 'Site',
-      cell: ({ getValue }) => <span className="text-muted">{getValue() ?? '—'}</span> }),
+    col.accessor(r => r.employe?.departement, {
+      id: 'dept', header: 'Département',
+      cell: ({ getValue }) => <span className="text-muted">{getValue() ?? '—'}</span>,
+    }),
+    col.accessor(r => r.employe?.site_travail, {
+      id: 'site', header: 'Site',
+      cell: ({ getValue }) => <span className="text-muted">{getValue() ?? '—'}</span>,
+    }),
     col.accessor('nombre_jours_impayes', {
       header: 'Jours',
       cell: ({ getValue }) => (
@@ -54,10 +58,10 @@ const TableauImpayes: React.FC<Props> = ({ data, page, onPageChange }) => {
     }),
     col.display({
       id: 'payer', header: 'Payer',
-      cell: () => (
-        <button className="btn btn-soft-danger btn-sm d-flex align-items-center gap-1">
+      cell: ({row}) => (
+        <Link className="btn btn-soft-danger btn-sm d-flex align-items-center gap-1" to={`/paiement/${row.original?.id}`}>
           <i className="ri-bank-card-line" />Payer
-        </button>
+        </Link>
       ),
     }),
     col.display({
@@ -71,7 +75,6 @@ const TableauImpayes: React.FC<Props> = ({ data, page, onPageChange }) => {
     }),
   ], []);
 
-  // rows est toujours un tableau — TanStack ne plante plus sur undefined
   const table = useReactTable({
     data: rows,
     columns,
@@ -129,25 +132,13 @@ const TableauImpayes: React.FC<Props> = ({ data, page, onPageChange }) => {
             </div>
 
             {!isEmpty && (
-              <div className="align-items-center mt-3 justify-content-between d-flex">
-                <div className="text-muted fs-13">
-                  Affichage <span className="fw-semibold">{debut}–{fin}</span> sur{' '}
-                  <span className="fw-semibold">{total}</span>
-                </div>
-                <ul className="pagination pagination-separated pagination-sm mb-0">
-                  <li className={`page-item ${page <= 1 ? 'disabled' : ''}`}>
-                    <Link to="#" className="page-link" onClick={() => onPageChange(page - 1)}>←</Link>
-                  </li>
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
-                    <li key={p} className={`page-item ${p === page ? 'active' : ''}`}>
-                      <Link to="#" className="page-link" onClick={() => onPageChange(p)}>{p}</Link>
-                    </li>
-                  ))}
-                  <li className={`page-item ${page >= totalPages ? 'disabled' : ''}`}>
-                    <Link to="#" className="page-link" onClick={() => onPageChange(page + 1)}>→</Link>
-                  </li>
-                </ul>
-              </div>
+              <Pagination
+                page={page}
+                total={total}
+                pageSize={pageSize}
+                onPageChange={onPageChange}
+                onPageSizeChange={onPageSizeChange}
+              />
             )}
           </CardBody>
         </Card>

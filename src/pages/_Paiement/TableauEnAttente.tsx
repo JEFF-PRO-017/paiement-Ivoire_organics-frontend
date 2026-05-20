@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
 import { Card, CardBody, CardHeader, Col, Badge } from 'reactstrap';
 import {
   useReactTable, getCoreRowModel, flexRender,
@@ -7,34 +6,31 @@ import {
 } from '@tanstack/react-table';
 import { Paginated, Portefeuille } from './types';
 import ModalDetailEmploye from './ModalDetailEmploye';
+import Pagination from 'pages/Components/Pagination';
 
 interface Props {
-  data:          Paginated<Portefeuille>;
-  page:          number;
-  onPageChange:  (p: number) => void;
-  onConfirmerRH: (ids: number[]) => Promise<void>;
+  data:              Paginated<Portefeuille>;
+  page:              number;
+  pageSize:          number;
+  onPageChange:      (p: number) => void;
+  onPageSizeChange:  (size: number) => void;
+  onConfirmerRH:     (ids: number[]) => Promise<void>;
 }
 
 const col = createColumnHelper<Portefeuille>();
 const fmt = (n: number) => n.toLocaleString('fr-FR') + ' F';
 
-const TableauEnAttente: React.FC<Props> = ({ data, page, onPageChange, onConfirmerRH }) => {
+const TableauEnAttente: React.FC<Props> = ({
+  data, page, pageSize, onPageChange, onPageSizeChange, onConfirmerRH,
+}) => {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [modal,        setModal]        = useState<Portefeuille | null>(null);
   const [confirming,   setConfirming]   = useState(false);
 
-  // ── Guards ────────────────────────────────────────────────────────────────
-  const rows       = data?.results   ?? [];
-  const total      = data?.count  ?? 0;
-  const limit      = data?.limit  ?? 5;
-  const totalPages = Math.max(1, Math.ceil(total / limit));
-  const isEmpty    = rows.length === 0;
+  const rows    = data?.results ?? [];
+  const total   = data?.count   ?? 0;
+  const isEmpty = rows.length === 0;
 
-  // ── Pagination display ────────────────────────────────────────────────────
-  const debut = total === 0 ? 0 : (page - 1) * limit + 1;
-  const fin   = Math.min(page * limit, total);
-
-  // ── Colonnes ──────────────────────────────────────────────────────────────
   const columns = useMemo(() => [
     col.display({
       id: 'select',
@@ -61,10 +57,14 @@ const TableauEnAttente: React.FC<Props> = ({ data, page, onPageChange, onConfirm
         </button>
       ),
     }),
-    col.accessor(r => r.employe?.departement, { id: 'dept', header: 'Département',
-      cell: ({ getValue }) => <span className="text-muted">{getValue() ?? '—'}</span> }),
-    col.accessor(r => r.employe?.site_travail, { id: 'site', header: 'Site',
-      cell: ({ getValue }) => <span className="text-muted">{getValue() ?? '—'}</span> }),
+    col.accessor(r => r.employe?.departement, {
+      id: 'dept', header: 'Département',
+      cell: ({ getValue }) => <span className="text-muted">{getValue() ?? '—'}</span>,
+    }),
+    col.accessor(r => r.employe?.site_travail, {
+      id: 'site', header: 'Site',
+      cell: ({ getValue }) => <span className="text-muted">{getValue() ?? '—'}</span>,
+    }),
     col.accessor('nombre_jours_impayes', {
       header: 'Jours',
       cell: ({ getValue }) => (
@@ -188,27 +188,14 @@ const TableauEnAttente: React.FC<Props> = ({ data, page, onPageChange, onConfirm
               </table>
             </div>
 
-            {/* Pagination — masquée si tableau vide */}
             {!isEmpty && (
-              <div className="align-items-center mt-3 justify-content-between d-flex">
-                <div className="text-muted fs-13">
-                  Affichage <span className="fw-semibold">{debut}–{fin}</span> sur{' '}
-                  <span className="fw-semibold">{total}</span>
-                </div>
-                <ul className="pagination pagination-separated pagination-sm mb-0">
-                  <li className={`page-item ${page <= 1 ? 'disabled' : ''}`}>
-                    <Link to="#" className="page-link" onClick={() => onPageChange(page - 1)}>←</Link>
-                  </li>
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
-                    <li key={p} className={`page-item ${p === page ? 'active' : ''}`}>
-                      <Link to="#" className="page-link" onClick={() => onPageChange(p)}>{p}</Link>
-                    </li>
-                  ))}
-                  <li className={`page-item ${page >= totalPages ? 'disabled' : ''}`}>
-                    <Link to="#" className="page-link" onClick={() => onPageChange(page + 1)}>→</Link>
-                  </li>
-                </ul>
-              </div>
+              <Pagination
+                page={page}
+                total={total}
+                pageSize={pageSize}
+                onPageChange={onPageChange}
+                onPageSizeChange={onPageSizeChange}
+              />
             )}
           </CardBody>
         </Card>

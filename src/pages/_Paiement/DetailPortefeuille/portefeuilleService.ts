@@ -24,7 +24,7 @@ export const portefeuilleService = {
   async fetchDetail(id: number): Promise<PortefeuilleDetail> {
     const { data: portefeuille } = await api.get<Portefeuille>(`/portefeuilles/${id}/`);
     const { data: historique }   = await api.get<HistoriquePaiement[]>(
-      `/portefeuilles/historique/?employe_id=${portefeuille.employe_id}`
+      `/portefeuilles/historique/?employe_id=${portefeuille?.employe?.id}`
     );
     return { portefeuille, historique };
   },

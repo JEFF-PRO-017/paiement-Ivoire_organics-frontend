@@ -43,7 +43,7 @@ const DetailPortefeuille: React.FC = () => {
                         <h5>Portefeuille introuvable</h5>
                         <button
                             className="btn btn-soft-primary btn-sm mt-2"
-                            onClick={() => navigate('/paiements/historique')}
+                            onClick={() => navigate('/paiements')}
                         >
                             ← Retour
                         </button>
