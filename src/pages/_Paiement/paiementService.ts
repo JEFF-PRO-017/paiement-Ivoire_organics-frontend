@@ -24,8 +24,8 @@ export const paiementService = {
     return data;
   },
 
-  async getHistorique(limit = 3): Promise<HistoriquePaiement[]> {
-    const { data } = await api.get(`/paiement/historique/?limit=${limit}`);
+  async getHistorique(limit = 4): Promise<HistoriquePaiement[]> {
+    const { data } = await api.get(`/paiement/historique-par-jour-paiement/?limit=${limit}`);
     return data;
   },
 

@@ -1,35 +1,31 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Card, CardBody, CardHeader, Col, Badge } from 'reactstrap';
-import {
-  useReactTable, getCoreRowModel, flexRender,
-  createColumnHelper, RowSelectionState,
-} from '@tanstack/react-table';
+import { createColumnHelper, RowSelectionState } from '@tanstack/react-table';
 import { Paginated, Portefeuille } from './types';
 import ModalDetailEmploye from './ModalDetailEmploye';
-import Pagination from 'pages/Components/Pagination';
-
-interface Props {
-  data:              Paginated<Portefeuille>;
-  page:              number;
-  pageSize:          number;
-  onPageChange:      (p: number) => void;
-  onPageSizeChange:  (size: number) => void;
-  onConfirmerRH:     (ids: number[]) => Promise<void>;
-}
+import TableContainer from 'pages/Components/TableContainer'; // ← adaptez le chemin
 
 const col = createColumnHelper<Portefeuille>();
 const fmt = (n: number) => n.toLocaleString('fr-FR') + ' F';
+
+interface Props {
+  data:             Paginated<Portefeuille>;
+  page:             number;
+  pageSize:         number;
+  onPageChange:     (p: number) => void;
+  onPageSizeChange: (size: number) => void;
+  onConfirmerRH:    (ids: number[]) => Promise<void>;
+}
 
 const TableauEnAttente: React.FC<Props> = ({
   data, page, pageSize, onPageChange, onPageSizeChange, onConfirmerRH,
 }) => {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-  const [modal,        setModal]        = useState<Portefeuille | null>(null);
-  const [confirming,   setConfirming]   = useState(false);
+  const [modal,        setModal       ] = useState<Portefeuille | null>(null);
+  const [confirming,   setConfirming  ] = useState(false);
 
-  const rows    = data?.results ?? [];
-  const total   = data?.count   ?? 0;
-  const isEmpty = rows.length === 0;
+  const rows  = data?.results ?? [];
+  const total = data?.count   ?? 0;
 
   const columns = useMemo(() => [
     col.display({
@@ -80,7 +76,7 @@ const TableauEnAttente: React.FC<Props> = ({
       cell: ({ row }) => (
         <button className="btn btn-soft-success btn-sm d-flex align-items-center gap-1"
           onClick={() => onConfirmerRH([row.original.id])}>
-          <i className="ri-check-line" />Confirmer
+          <i className="ri-check-line" /> Confirmer
         </button>
       ),
     }),
@@ -89,20 +85,11 @@ const TableauEnAttente: React.FC<Props> = ({
       cell: ({ row }) => (
         <button className="btn btn-soft-warning btn-sm d-flex align-items-center gap-1"
           onClick={() => setModal(row.original)}>
-          <i className="ri-eye-line" />Voir
+          <i className="ri-eye-line" /> Voir
         </button>
       ),
     }),
   ], [onConfirmerRH]);
-
-  const table = useReactTable({
-    data: rows,
-    columns,
-    state: { rowSelection },
-    onRowSelectionChange: setRowSelection,
-    getCoreRowModel: getCoreRowModel(),
-    getRowId: row => String(row.id),
-  });
 
   const selectedIds     = Object.keys(rowSelection).map(Number);
   const selectedMontant = rows
@@ -121,6 +108,7 @@ const TableauEnAttente: React.FC<Props> = ({
     <React.Fragment>
       <Col xl={12}>
         <Card className="card-height-100">
+
           <CardHeader className="d-flex align-items-center flex-wrap gap-2 border-bottom">
             <div className="d-flex align-items-center gap-2 flex-grow-1">
               <div className="rounded-1" style={{ width: 4, height: 20, background: 'var(--vz-warning)' }} />
@@ -128,9 +116,12 @@ const TableauEnAttente: React.FC<Props> = ({
               <Badge color="warning" className="bg-warning-subtle text-warning">{total}</Badge>
             </div>
 
+            {/* Barre de sélection groupée */}
             {selectedIds.length > 0 && (
-              <div className="d-flex align-items-center gap-2 px-3 py-1 rounded-2 bg-primary-subtle border border-primary-subtle"
-                style={{ animation: 'secFadeIn .22s ease' }}>
+              <div
+                className="d-flex align-items-center gap-2 px-3 py-1 rounded-2 bg-primary-subtle border border-primary-subtle"
+                style={{ animation: 'secFadeIn .22s ease' }}
+              >
                 <i className="ri-checkbox-multiple-line text-primary fs-16" />
                 <span className="text-primary fw-semibold fs-13">
                   {selectedIds.length} sélectionné{selectedIds.length > 1 ? 's' : ''}
@@ -144,7 +135,7 @@ const TableauEnAttente: React.FC<Props> = ({
                 >
                   {confirming
                     ? <><span className="spinner-border spinner-border-sm" /> En cours…</>
-                    : <><i className="ri-check-double-line" />Confirmer RH ({selectedIds.length})</>
+                    : <><i className="ri-check-double-line" /> Confirmer RH ({selectedIds.length})</>
                   }
                 </button>
               </div>
@@ -152,52 +143,27 @@ const TableauEnAttente: React.FC<Props> = ({
           </CardHeader>
 
           <CardBody>
-            <div className="table-responsive table-card">
-              <table className="table table-hover table-nowrap table-centered align-middle mb-0">
-                <thead className="bg-light text-muted">
-                  {table.getHeaderGroups().map(hg => (
-                    <tr key={hg.id}>
-                      {hg.headers.map(h => (
-                        <th key={h.id} style={h.getSize() !== 150 ? { width: h.getSize() } : {}}>
-                          {flexRender(h.column.columnDef.header, h.getContext())}
-                        </th>
-                      ))}
-                    </tr>
-                  ))}
-                </thead>
-                <tbody>
-                  {isEmpty ? (
-                    <tr>
-                      <td colSpan={columns.length} className="text-center py-5 text-muted">
-                        <i className="ri-inbox-line display-6 d-block mb-2" />
-                        Aucun portefeuille en attente
-                      </td>
-                    </tr>
-                  ) : (
-                    table.getRowModel().rows.map(row => (
-                      <tr key={row.id} className={row.getIsSelected() ? 'table-active' : ''}>
-                        {row.getVisibleCells().map(cell => (
-                          <td key={cell.id}>
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </td>
-                        ))}
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-
-            {!isEmpty && (
-              <Pagination
-                page={page}
-                total={total}
-                pageSize={pageSize}
-                onPageChange={onPageChange}
-                onPageSizeChange={onPageSizeChange}
-              />
-            )}
+            <TableContainer
+              columns={columns}
+              data={rows}
+              // filtre & export
+              isGlobalFilter
+              isExport
+              exportFilename="portefeuilles_en_attente"
+              SearchPlaceholder="Rechercher un employé, département…"
+              // sélection
+              rowSelection={rowSelection}
+              onRowSelectionChange={setRowSelection}
+              getRowId={row => String(row.id)}
+              // pagination
+              page={page}
+              total={total}
+              pageSize={pageSize}
+              onPageChange={onPageChange}
+              onPageSizeChange={onPageSizeChange}
+            />
           </CardBody>
+
         </Card>
       </Col>
 

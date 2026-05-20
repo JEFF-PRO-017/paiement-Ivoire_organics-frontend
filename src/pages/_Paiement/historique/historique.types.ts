@@ -16,6 +16,7 @@ export interface LignePaiement {
   nombre_jours:       number;
   montant_total:     number;
   portefeuille__statut:      StatutPortefeuille;
+  portefeuille__id:          number;
   date_paiement: string;
 }
 

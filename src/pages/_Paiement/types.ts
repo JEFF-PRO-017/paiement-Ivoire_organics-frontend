@@ -46,7 +46,8 @@ export interface DashboardStats {
 export interface HistoriquePaiement {
   id: number;
   date_paiement: string;
-  montant_total: number;
+  total: number;
+  count:number;
 }
 export interface HistoriquePaiement {
   id: number;

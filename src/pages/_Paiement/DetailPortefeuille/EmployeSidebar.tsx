@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { Card, CardBody, Badge } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
 import { Portefeuille, StatutPortefeuille, StatutEmploye } from '../types';
-import { STATUT_CLR, STATUT_ORDER, fmt, fmtDate } from './constants';
+import { STATUT_CLR, STATUT_ORDER} from './constants';
+import { fmt, fmtDate } from 'pages/Utils/Utils';
 
 interface Props {
   pf: Portefeuille;

@@ -1,12 +1,13 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Card, CardBody, CardHeader, Col, Badge } from 'reactstrap';
-import {
-  useReactTable, getCoreRowModel, flexRender, createColumnHelper,
-} from '@tanstack/react-table';
+import { createColumnHelper } from '@tanstack/react-table';
+import { Link } from 'react-router-dom';
 import { Paginated, Portefeuille } from './types';
 import ModalDetailEmploye from './ModalDetailEmploye';
-import Pagination from 'pages/Components/Pagination';
-import { Link } from 'react-router-dom';
+import TableContainer from 'pages/Components/TableContainer'; // ← adaptez le chemin
+
+const col = createColumnHelper<Portefeuille>();
+const fmt = (n: number) => n.toLocaleString('fr-FR') + ' F';
 
 interface Props {
   data?:            Paginated<Portefeuille>;
@@ -16,24 +17,22 @@ interface Props {
   onPageSizeChange: (size: number) => void;
 }
 
-const col = createColumnHelper<Portefeuille>();
-const fmt = (n: number) => n.toLocaleString('fr-FR') + ' F';
-
 const TableauImpayes: React.FC<Props> = ({
   data, page, pageSize, onPageChange, onPageSizeChange,
 }) => {
   const [modal, setModal] = useState<Portefeuille | null>(null);
 
-  const rows    = data?.results ?? [];
-  const total   = data?.count   ?? 0;
-  const isEmpty = rows.length === 0;
+  const rows  = data?.results ?? [];
+  const total = data?.count   ?? 0;
 
   const columns = useMemo(() => [
     col.accessor(r => r.employe?.nom_complet, {
       id: 'nom', header: 'Employé',
       cell: ({ row }) => (
-        <button className="btn btn-link text-danger fw-medium p-0 text-start"
-          onClick={() => setModal(row.original)}>
+        <button
+          className="btn btn-link text-danger fw-medium p-0 text-start"
+          onClick={() => setModal(row.original)}
+        >
           {row.original.employe?.nom_complet ?? '—'}
         </button>
       ),
@@ -58,34 +57,33 @@ const TableauImpayes: React.FC<Props> = ({
     }),
     col.display({
       id: 'payer', header: 'Payer',
-      cell: ({row}) => (
-        <Link className="btn btn-soft-danger btn-sm d-flex align-items-center gap-1" to={`/paiement/${row.original?.id}`}>
-          <i className="ri-bank-card-line" />Payer
+      cell: ({ row }) => (
+        <Link
+          className="btn btn-soft-danger btn-sm d-flex align-items-center gap-1"
+          to={`/paiement/${row.original?.id}`}
+        >
+          <i className="ri-bank-card-line" /> Payer
         </Link>
       ),
     }),
     col.display({
       id: 'detail', header: 'Détail',
       cell: ({ row }) => (
-        <button className="btn btn-soft-danger btn-sm d-flex align-items-center gap-1"
-          onClick={() => setModal(row.original)}>
-          <i className="ri-eye-line" />Voir
+        <button
+          className="btn btn-soft-danger btn-sm d-flex align-items-center gap-1"
+          onClick={() => setModal(row.original)}
+        >
+          <i className="ri-eye-line" /> Voir
         </button>
       ),
     }),
   ], []);
 
-  const table = useReactTable({
-    data: rows,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getRowId: row => String(row.id),
-  });
-
   return (
     <React.Fragment>
       <Col xl={12}>
         <Card className="card-height-100">
+
           <CardHeader className="d-flex align-items-center border-bottom">
             <div className="d-flex align-items-center gap-2 flex-grow-1">
               <div className="rounded-1" style={{ width: 4, height: 20, background: 'var(--vz-danger)' }} />
@@ -99,48 +97,23 @@ const TableauImpayes: React.FC<Props> = ({
           </CardHeader>
 
           <CardBody>
-            <div className="table-responsive table-card">
-              <table className="table table-hover table-nowrap table-centered align-middle mb-0">
-                <thead className="bg-light text-muted">
-                  {table.getHeaderGroups().map(hg => (
-                    <tr key={hg.id}>
-                      {hg.headers.map(h => (
-                        <th key={h.id}>{flexRender(h.column.columnDef.header, h.getContext())}</th>
-                      ))}
-                    </tr>
-                  ))}
-                </thead>
-                <tbody>
-                  {isEmpty ? (
-                    <tr>
-                      <td colSpan={columns.length} className="text-center py-5 text-muted">
-                        <i className="ri-inbox-line display-6 d-block mb-2" />
-                        Aucun portefeuille impayé
-                      </td>
-                    </tr>
-                  ) : (
-                    table.getRowModel().rows.map(row => (
-                      <tr key={row.id}>
-                        {row.getVisibleCells().map(cell => (
-                          <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
-                        ))}
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-
-            {!isEmpty && (
-              <Pagination
-                page={page}
-                total={total}
-                pageSize={pageSize}
-                onPageChange={onPageChange}
-                onPageSizeChange={onPageSizeChange}
-              />
-            )}
+            <TableContainer
+              columns={columns}
+              data={rows}
+              // filtre & export
+              isGlobalFilter
+              isExport
+              exportFilename="portefeuilles_impayes"
+              SearchPlaceholder="Rechercher un employé, département…"
+              // pagination serveur
+              page={page}
+              total={total}
+              pageSize={pageSize}
+              onPageChange={onPageChange}
+              onPageSizeChange={onPageSizeChange}
+            />
           </CardBody>
+
         </Card>
       </Col>
 

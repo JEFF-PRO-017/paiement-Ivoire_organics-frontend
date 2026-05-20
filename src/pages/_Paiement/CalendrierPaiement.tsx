@@ -1,6 +1,7 @@
 import React from 'react';
 import Flatpickr from 'react-flatpickr';
 import { HistoriquePaiement } from './types';
+import { fmtDate, fmt } from '../Utils/Utils';
 
 interface Props {
   joursCumules: string[];
@@ -8,8 +9,6 @@ interface Props {
 }
 
 const CalendrierPaiement: React.FC<Props> = ({ joursCumules, historique }) => {
-  const fmt     = (iso: string) => new Date(iso).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
-  const fmtMont = (n: number)   => n.toLocaleString('fr-FR') + ' FCFA';
 
   return (
     <React.Fragment>
@@ -49,7 +48,7 @@ const CalendrierPaiement: React.FC<Props> = ({ joursCumules, historique }) => {
             {/* 3 derniers paiements — pattern mini-stats-wid  */}
             <h6 className="text-uppercase fw-semibold text-muted mb-3">Derniers paiements</h6>
 
-            {historique.map(item => (
+            {historique?.map(item => (
               <div key={item.id} className="mini-stats-wid d-flex align-items-center mt-3">
                 <div className="flex-shrink-0 avatar-sm">
                   <span className="mini-stat-icon avatar-title rounded-circle bg-success-subtle text-success fs-4">
@@ -57,12 +56,12 @@ const CalendrierPaiement: React.FC<Props> = ({ joursCumules, historique }) => {
                   </span>
                 </div>
                 <div className="flex-grow-1 ms-3">
-                  <h6 className="mb-1">{fmt(item.date_paiement)}</h6>
-                  <p className="text-muted mb-0 fs-13">Paiement effectué</p>
+                  <h6 className="mb-1">{fmtDate(item.date_paiement)}</h6>
+                  <p className="text-muted mb-0 fs-13">Paiement de {item.count} employé(s) effectué</p>
                 </div>
                 <div className="flex-shrink-0">
                   <span className="badge bg-success-subtle text-success fw-medium">
-                    {fmtMont(item.montant_total)}
+                    {fmt(item.total)}
                   </span>
                 </div>
               </div>

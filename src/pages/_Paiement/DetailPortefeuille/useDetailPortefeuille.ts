@@ -19,6 +19,7 @@ import { toast } from 'react-toastify';
 import { HistoriquePaiement, Portefeuille, StatutPortefeuille } from '../types';
 import { STATUT_CLR }                       from './constants';
 import { portefeuilleService }              from './portefeuilleService';
+import { fmt } from 'pages/Utils/Utils';
 
 // ── Types exposés ─────────────────────────────────────────────────────────────
 
@@ -124,7 +125,7 @@ export const useDetailPortefeuille = (): UseDetailPortefeuilleReturn => {
 
     const historiqueEvents: CalendarEvent[] = historique.map((h) => ({
       id:        `paiement-${h.id}`,
-      title:     `${h.statut} · ${h.jours} j · ${h.montant.toLocaleString('fr-FR')} F`,
+      title:     `${h.statut} · ${h.jours} j · ${fmt(h.montant)}`,
       start:     h.date_debut,
       end:       h.date_fin,
       allDay:    true,

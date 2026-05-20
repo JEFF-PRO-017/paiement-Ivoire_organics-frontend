@@ -8,8 +8,9 @@ import {
 } from '@tanstack/react-table';
 
 import { LignePaiement } from './historique.types';
-import { STATUT_CLR, fmt, fmtDate } from './historique.constants';
+import { STATUT_CLR } from './historique.constants';
 import Pagination from 'pages/Components/Pagination';
+import { fmtDate, fmt } from '../../Utils/Utils';
 
 interface Props {
   data:       LignePaiement[];
@@ -72,7 +73,7 @@ const TableauHistorique: React.FC<Props> = ({
       cell: ({ row }) => (
         <div className="d-flex gap-1">
           <Link
-            to={`/paiements/${row.original.id}`}
+            to={`/paiement/${row.original.portefeuille__id}`}
             className="btn btn-soft-primary btn-sm d-flex align-items-center gap-1"
           >
             <i className="ri-eye-line" />Détail

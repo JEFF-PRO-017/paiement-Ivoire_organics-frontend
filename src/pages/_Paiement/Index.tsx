@@ -128,7 +128,7 @@ const DashboardPaiement: React.FC = () => {
               <SectionWrapper
                 sectionKey="s1" label="Statistiques"
                 visible={visible.s1} onClose={hide}
-                skeleton={<Skel h={110} cols={3} />}
+                // skeleton={<Skel h={110} cols={3} />}
               >
                 {stats && <Widgets stats={stats} />}
               </SectionWrapper>
@@ -137,7 +137,7 @@ const DashboardPaiement: React.FC = () => {
               <SectionWrapper
                 sectionKey="s3" label="En attente"
                 visible={visible.s3} onClose={hide}
-                skeleton={<Skel h={260} />}
+                // skeleton={<Skel h={260} />}
               >
                 {enAttente && (
                   <Row className="mt-3">
@@ -160,7 +160,7 @@ const DashboardPaiement: React.FC = () => {
               <SectionWrapper
                 sectionKey="s2" label="Calendrier"
                 visible={visible.s2} onClose={hide}
-                skeleton={<div className="col-xxl-4"><Skel h={440} /></div>}
+                // skeleton={<div className="col-xxl-4"><Skel h={440} /></div>}
               >
                 <CalendrierPaiement joursCumules={jours} historique={historique} />
               </SectionWrapper>
@@ -173,7 +173,7 @@ const DashboardPaiement: React.FC = () => {
             <SectionWrapper
               sectionKey="s4" label="Impayés"
               visible={visible.s4} onClose={hide}
-              skeleton={<Skel h={260} />}
+              // skeleton={<Skel h={260} />}
             >
               {impayes && (
                 <TableauImpayes
@@ -190,7 +190,7 @@ const DashboardPaiement: React.FC = () => {
         </Container>
       </div>
 
-      <ToastContainer position="top-right" autoClose={3000} />
+      {/* <ToastContainer position="top-right" autoClose={3000} /> */}
     </React.Fragment>
   );
 };

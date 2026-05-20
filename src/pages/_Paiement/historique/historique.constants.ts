@@ -21,9 +21,7 @@ export const STATUT_CLR: Record<StatutPortefeuille, string> = {
 
 // ── Formatters ────────────────────────────────────────────────────────────────
 
-export const fmt     = (n: number) => n?(n.toLocaleString('fr-FR') + ' F'): '0 F';
-export const fmtDate = (iso: string) =>
-  new Date(iso).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+
 
 /** Calcule la plage [from, now] selon le chip sélectionné. */
 export const chipToDateRange = (chip: string): [Date, Date] => {
