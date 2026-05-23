@@ -1,29 +1,48 @@
 import React, { useMemo, useState } from 'react';
 import { Card, CardBody, CardHeader, Col, Badge } from 'reactstrap';
 import { createColumnHelper } from '@tanstack/react-table';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Paginated, Portefeuille } from './types';
 import ModalDetailEmploye from './ModalDetailEmploye';
 import TableContainer from 'pages/Components/TableContainer'; // ← adaptez le chemin
+import { NavItem } from 'pages/Utils/Utils.model';
 
 const col = createColumnHelper<Portefeuille>();
 const fmt = (n: number) => n.toLocaleString('fr-FR') + ' F';
 
 interface Props {
-  data?:            Paginated<Portefeuille>;
-  page:             number;
-  pageSize:         number;
-  onPageChange:     (p: number) => void;
+  data?: Paginated<Portefeuille>;
+  page: number;
+  pageSize: number;
+  onPageChange: (p: number) => void;
   onPageSizeChange: (size: number) => void;
 }
 
 const TableauImpayes: React.FC<Props> = ({
   data, page, pageSize, onPageChange, onPageSizeChange,
 }) => {
+  const navigate = useNavigate();
+
+  // rows = vos données déjà chargées (la liste affichée dans le tableau)
+  // Adapter `r.portefeuille_id` et `r.employe.nom_complet` selon vos types réels.
+
+  const handleRowClick = (clickedRow: any, rows: any[]) => {
+    const queue: NavItem[] = rows.map(r => ({
+      id: r.id,       // ← l'id du portefeuille
+      nom: r.employe.nom_complet,   // ← le nom affiché dans la navbar
+    }));
+
+    const index = rows.findIndex(r => r.id === clickedRow.id);
+
+    navigate(`/paiement/${clickedRow.id}`, {
+      state: { queue, index },
+    });
+  };
+
   const [modal, setModal] = useState<Portefeuille | null>(null);
 
-  const rows  = data?.results ?? [];
-  const total = data?.count   ?? 0;
+  const rows = data?.results ?? [];
+  const total = data?.count ?? 0;
 
   const columns = useMemo(() => [
     col.accessor(r => r.employe?.nom_complet, {
@@ -58,12 +77,11 @@ const TableauImpayes: React.FC<Props> = ({
     col.display({
       id: 'payer', header: 'Payer',
       cell: ({ row }) => (
-        <Link
+        <button
           className="btn btn-soft-danger btn-sm d-flex align-items-center gap-1"
-          to={`/paiement/${row.original?.id}`}
-        >
+          onClick={() => handleRowClick(row.original, rows)}>
           <i className="ri-bank-card-line" /> Payer
-        </Link>
+        </button>
       ),
     }),
     col.display({

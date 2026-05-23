@@ -47,16 +47,17 @@ export interface HistoriquePaiement {
   id: number;
   date_paiement: string;
   total: number;
-  count:number;
+  count: number;
 }
 export interface HistoriquePaiement {
   id: number;
   date_debut: Date;
   date_fin: Date;
-  jours: number;
-  montant: number;
+  nombre_jours: number;
+  montant_total: number;
   statut: StatutPortefeuille;
-
+  periodes_paiement: string[];
+  // date_paiement: Date;
 }
 
 export interface Paginated<T> {

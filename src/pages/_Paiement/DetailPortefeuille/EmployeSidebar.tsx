@@ -79,7 +79,7 @@ const EmployeSidebar: React.FC<Props> = ({ pf, loading, onOuvrirEmpreinte, onRes
           {/* ── KPIs compacts ── */}
           <div className="mb-3">
             {[
-              { label: 'Jours impayés', val: `${pf.nombre_jours_impayes} j`, bg: 'warning', icon: 'ri-calendar-todo-line' },
+              { label: `Jours ${pf.statut}`, val: `${pf.nombre_jours_impayes} j`, bg: 'warning', icon: 'ri-calendar-todo-line' },
               { label: 'Montant dû', val: fmt(montantDu), bg: 'success', icon: 'ri-money-dollar-circle-line' },
               { label: 'Taux/jour', val: fmt(pf.montant_journalier), bg: 'primary', icon: 'ri-price-tag-3-line' },
             ].map((k) => (

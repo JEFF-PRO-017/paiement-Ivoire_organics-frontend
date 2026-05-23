@@ -1,0 +1,1 @@
+export interface NavItem { id: number; nom: string; }

@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
-import { Link } from 'react-router-dom';
-import { Badge } from 'reactstrap';
+import { Link, useNavigate } from 'react-router-dom';
+import { Badge, Button } from 'reactstrap';
 import {
   createColumnHelper, flexRender,
   getCoreRowModel, getSortedRowModel,
@@ -11,26 +11,47 @@ import { LignePaiement } from './historique.types';
 import { STATUT_CLR } from './historique.constants';
 import Pagination from 'pages/Components/Pagination';
 import { fmtDate, fmt } from '../../Utils/Utils';
+import { NavItem } from 'pages/Utils/Utils.model';
 
 interface Props {
-  data:       LignePaiement[];
+  data: LignePaiement[];
   totalCount: number;
-  page:            number;
-  pageSize:        number;
-  totalPages:      number;
-  sorting:         SortingState;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+  sorting: SortingState;
   onSortingChange: OnChangeFn<SortingState>;
-  onPageChange:    (p: number) => void;
-  onPageSizeChange:(s: number) => void;
-  onExportPDF:     (id: number) => void;
+  onPageChange: (p: number) => void;
+  onPageSizeChange: (s: number) => void;
+  onExportPDF: (id: number) => void;
 }
 
 const col = createColumnHelper<LignePaiement>();
 
+
 const TableauHistorique: React.FC<Props> = ({
-  data, totalCount, page, pageSize, totalPages, 
+  data, totalCount, page, pageSize, totalPages,
   sorting, onSortingChange, onPageChange, onPageSizeChange, onExportPDF,
 }) => {
+
+  const navigate = useNavigate();
+
+  // rows = vos données déjà chargées (la liste affichée dans le tableau)
+  // Adapter `r.portefeuille_id` et `r.employe.nom_complet` selon vos types réels.
+
+   const handleRowClick = (clickedRow: any, rows: any[]) => {
+    const queue: NavItem[] = rows.map(r => ({
+      id: r.portefeuille__id,       // ← l'id du portefeuille
+      nom: r.employe__nom_complet,   // ← le nom affiché dans la navbar
+    }));
+
+    const index = rows.findIndex(r => r.portefeuille__id === clickedRow.portefeuille__id);
+
+    navigate(`/paiement/${clickedRow.portefeuille__id}`, {
+      state: { queue, index },
+    });
+  };
+
   console.log('Rerender TableauHistorique', { data, totalCount, page, pageSize, totalPages, sorting });
   const columns = useMemo(() => [
     col.accessor('date_paiement', {
@@ -72,19 +93,19 @@ const TableauHistorique: React.FC<Props> = ({
       header: 'Actions',
       cell: ({ row }) => (
         <div className="d-flex gap-1">
-          <Link
-            to={`/paiement/${row.original.portefeuille__id}`}
+          <button
+            onClick={() => handleRowClick(row.original, data)}  // ← passer la ligne cliquée et les données actuelles
             className="btn btn-soft-primary btn-sm d-flex align-items-center gap-1"
           >
             <i className="ri-eye-line" />Détail
-          </Link>
+          </button>
         </div>
       ),
     }),
   ], [onExportPDF]);
 
   const table = useReactTable({
-    data: data??[],  // ← data au lieu de paginated
+    data: data ?? [],  // ← data au lieu de paginated
     columns,
     state: { sorting },
     onSortingChange,
@@ -109,7 +130,7 @@ const TableauHistorique: React.FC<Props> = ({
                     style={{ cursor: h.column.getCanSort() ? 'pointer' : 'default', userSelect: 'none' }}
                   >
                     {flexRender(h.column.columnDef.header, h.getContext())}
-                    {h.column.getIsSorted() === 'asc'  && <i className="ri-arrow-up-s-line ms-1" />}
+                    {h.column.getIsSorted() === 'asc' && <i className="ri-arrow-up-s-line ms-1" />}
                     {h.column.getIsSorted() === 'desc' && <i className="ri-arrow-down-s-line ms-1" />}
                     {!h.column.getIsSorted() && h.column.getCanSort() && (
                       <i className="ri-expand-up-down-line ms-1 text-muted" style={{ opacity: 0.35 }} />

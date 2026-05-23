@@ -4,29 +4,48 @@ import { createColumnHelper, RowSelectionState } from '@tanstack/react-table';
 import { Paginated, Portefeuille } from './types';
 import ModalDetailEmploye from './ModalDetailEmploye';
 import TableContainer from 'pages/Components/TableContainer'; // ← adaptez le chemin
+import { useNavigate } from 'react-router';
+import { NavItem } from 'pages/Utils/Utils.model';
 
 const col = createColumnHelper<Portefeuille>();
 const fmt = (n: number) => n.toLocaleString('fr-FR') + ' F';
 
 interface Props {
-  data:             Paginated<Portefeuille>;
-  page:             number;
-  pageSize:         number;
-  onPageChange:     (p: number) => void;
+  data: Paginated<Portefeuille>;
+  page: number;
+  pageSize: number;
+  onPageChange: (p: number) => void;
   onPageSizeChange: (size: number) => void;
-  onConfirmerRH:    (ids: number[]) => Promise<void>;
+  onConfirmerRH: (ids: number[]) => Promise<void>;
 }
 
 const TableauEnAttente: React.FC<Props> = ({
   data, page, pageSize, onPageChange, onPageSizeChange, onConfirmerRH,
 }) => {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-  const [modal,        setModal       ] = useState<Portefeuille | null>(null);
-  const [confirming,   setConfirming  ] = useState(false);
+  const [modal, setModal] = useState<Portefeuille | null>(null);
+  const [confirming, setConfirming] = useState(false);
 
-  const rows  = data?.results ?? [];
-  const total = data?.count   ?? 0;
+  const rows = data?.results ?? [];
+  const total = data?.count ?? 0;
 
+  const navigate = useNavigate();
+
+  // rows = vos données déjà chargées (la liste affichée dans le tableau)
+  // Adapter `r.portefeuille_id` et `r.employe.nom_complet` selon vos types réels.
+
+  const handleRowClick = (clickedRow: any, rows: any[]) => {
+    const queue: NavItem[] = rows.map(r => ({
+      id: r.id,       // ← l'id du portefeuille
+      nom: r.employe.nom_complet,   // ← le nom affiché dans la navbar
+    }));
+
+    const index = rows.findIndex(r => r.id === clickedRow.id);
+
+    navigate(`/paiement/${clickedRow.id}`, {
+      state: { queue, index },
+    });
+  };
   const columns = useMemo(() => [
     col.display({
       id: 'select',
@@ -91,7 +110,7 @@ const TableauEnAttente: React.FC<Props> = ({
     }),
   ], [onConfirmerRH]);
 
-  const selectedIds     = Object.keys(rowSelection).map(Number);
+  const selectedIds = Object.keys(rowSelection).map(Number);
   const selectedMontant = rows
     .filter(p => selectedIds.includes(p.id))
     .reduce((acc, p) => acc + p.nombre_jours_impayes * p.montant_journalier, 0);
@@ -172,6 +191,9 @@ const TableauEnAttente: React.FC<Props> = ({
         isOpen={!!modal}
         toggle={() => setModal(null)}
         onConfirmerRH={id => onConfirmerRH([id])}
+        onViewPortefeuille={p => {
+          handleRowClick(p, rows);
+        }}
       />
     </React.Fragment>
   );

@@ -11,10 +11,11 @@ interface Props {
   portefeuille: Portefeuille | null;
   isOpen: boolean;
   toggle: () => void;
+  onViewPortefeuille?: (row: Portefeuille) => void;
   onConfirmerRH?: (id: number) => void;
 }
 
-const ModalDetailEmploye: React.FC<Props> = ({ portefeuille, isOpen, toggle, onConfirmerRH }) => {
+const ModalDetailEmploye: React.FC<Props> = ({ portefeuille, isOpen, toggle, onViewPortefeuille, onConfirmerRH }) => {
   const p = portefeuille;
   const emp = p?.employe;
 
@@ -114,9 +115,12 @@ const ModalDetailEmploye: React.FC<Props> = ({ portefeuille, isOpen, toggle, onC
 
       <ModalFooter className="border-0 pt-0">
         <Button color="light" onClick={toggle}>Fermer</Button>
-        <Link to={p ? `/paiement/${p.id}` : '#'} className="btn btn-soft-primary d-flex align-items-center gap-1">
+        <button
+          onClick={() => { if (p && onViewPortefeuille) onViewPortefeuille(p); }}
+          className="btn btn-soft-primary d-flex align-items-center gap-1"
+        >
           <i className="ri-eye-line" />Voir le portefeuille
-        </Link>
+        </button>
         {onConfirmerRH && p && (
           <Button color="success" onClick={() => { onConfirmerRH(p.id); toggle(); }}>
             <i className="ri-check-line align-middle me-1" />
