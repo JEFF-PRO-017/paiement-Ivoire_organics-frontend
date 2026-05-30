@@ -16,7 +16,7 @@ import {
 } from 'reactstrap';
 import * as Yup        from 'yup';
 import { useFormik }   from 'formik';
-import ParticlesAuth   from '../AuthenticationInner/ParticlesAuth';
+import ParticlesAuth   from './Composants/ParticlesAuth';
 import { useAuth }     from './useAuth';
 
 import logoLight from '../../assets/images/logo-light.png';

@@ -12,7 +12,6 @@ export interface PagedResponse {
   stats:       StatsHistorique;
 }
 
-// ── Query string ───────────────────────────────────────────────────────────────
 const filtresEnParams = (
   filtres: Partial<FiltresState>,
   page     = 1,
@@ -40,10 +39,7 @@ export const historiqueService = {
     page     = 1,
     pageSize = 10,
   ): Promise<PagedResponse> {
-    const { data } = await api.get(
-      `/paiement/historique/?${filtresEnParams(filtres, page, pageSize)}`
-    );
-    return data;
+    return api.get(`/paiement/historique/?${filtresEnParams(filtres, page, pageSize)}`);
   },
 
   async exporterCSV(lignes: LignePaiement[]): Promise<void> {
@@ -62,14 +58,14 @@ export const historiqueService = {
   },
 
   async exporterPDF(filtres: Partial<FiltresState>): Promise<void> {
-    const { data } = await axiosBlob.get(
+    const blob = await axiosBlob.get(
       `/paiement/historique/export-pdf/?${filtresEnParams(filtres)}`
     );
-    downloadBlob(data, `historique-${Date.now()}.pdf`);
+    downloadBlob(blob as unknown as Blob, `historique-${Date.now()}.pdf`);
   },
 
   async exporterPDFLigne(id: number): Promise<void> {
-    const { data } = await axiosBlob.get(`/portefeuilles/${id}/export-pdf/`);
-    downloadBlob(data, `paiement-${id}.pdf`);
+    const blob = await axiosBlob.get(`/portefeuilles/${id}/export-pdf/`);
+    downloadBlob(blob as unknown as Blob, `paiement-${id}.pdf`);
   },
 };

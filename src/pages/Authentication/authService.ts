@@ -1,14 +1,4 @@
-/*
-  authService.ts
-  ──────────────
-  Auth connectée au backend Django.
-  - Login     → POST /auth/login/
-  - Refresh   → POST /auth/refresh/
-  - Logout    → suppression session locale
-*/
-
 import { api } from "api/api";
-
 
 export const INACTIVITY_MS     = 30 * 60 * 1_000;
 export const REFRESH_MARGIN_MS =  2 * 60 * 1_000;
@@ -37,23 +27,21 @@ const clearUser = () => {
 
 export const authService = {
 
-  // POST /auth/login/
   async login(email: string, password: string): Promise<AuthUser> {
-    const { data } = await api.post<AuthUser>('/auth/login/', { email, password });
-    saveUser(data);
-    authService.setSiteActif(data.sites[0] ?? '');
-    return data;
+    const user = await api.post('/auth/login/', { email, password }) as unknown as AuthUser;
+    saveUser(user);
+    // Sélectionne le premier site par défaut — injecté dans toutes les requêtes suivantes
+    authService.setSiteActif(user.sites[0] ?? '');
+    return user;
   },
 
-  // POST /auth/refresh/
   async refreshToken(): Promise<AuthUser> {
     const current = authService.getUser();
     if (!current) throw new Error('Non authentifié');
-    const { data } = await api.post<Pick<AuthUser, 'accessToken' | 'expirationTime'>>(
-      '/auth/refresh/',
-      { refreshToken: current.refreshToken }
-    );
-    const updated = { ...current, ...data };
+    const fields = await api.post('/auth/refresh/', {
+      refreshToken: current.refreshToken,
+    }) as unknown as Pick<AuthUser, 'accessToken' | 'expirationTime'>;
+    const updated = { ...current, ...fields };
     saveUser(updated);
     return updated;
   },
@@ -61,7 +49,7 @@ export const authService = {
   logout(): void { clearUser(); },
 
   getUser(): AuthUser | null {
-    try { return JSON.parse(sessionStorage.getItem(SESSION_KEY) ?? ''); }
+    try   { return JSON.parse(sessionStorage.getItem(SESSION_KEY) ?? ''); }
     catch { return null; }
   },
 
@@ -71,7 +59,14 @@ export const authService = {
   },
 
   getSiteActif: (): string | null => sessionStorage.getItem(SITE_KEY),
-  setSiteActif: (site: string)    => sessionStorage.setItem(SITE_KEY, site),
+
+  setSiteActif(site: string): void {
+    if (!site) {
+      window.location.href = '/error/no-site';
+      return;
+    }
+    sessionStorage.setItem(SITE_KEY, site);
+  },
 
   INACTIVITY_MS,
   REFRESH_MARGIN_MS,

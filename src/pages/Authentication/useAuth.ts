@@ -12,18 +12,20 @@
 */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useNavigate }                               from 'react-router-dom';
-import { toast }                                     from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { AuthUser, authService } from './authService';
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 export interface UseAuthReturn {
-  user:         AuthUser | null;
-  siteActif:    string | null;
-  isLoading:    boolean;
-  error:        string | null;
-  login:        (email: string, password: string) => Promise<void>;
-  logout:       () => void;
+  user: AuthUser | null;
+  siteActif: string | null;
+  isLoading: boolean;
+  error: string | null;
+  token: string | null;
+  loading: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => void;
   setSiteActif: (site: string) => void;
 }
 
@@ -32,13 +34,16 @@ export interface UseAuthReturn {
 export const useAuth = (): UseAuthReturn => {
   const navigate = useNavigate();
 
-  const [user,      setUser]      = useState<AuthUser | null>(authService.getUser());
+  const [user, setUser] = useState<AuthUser | null>(authService.getUser());
   const [siteActif, setSiteActifState] = useState<string | null>(authService.getSiteActif());
   const [isLoading, setIsLoading] = useState(false);
-  const [error,     setError]     = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const inactivityTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const refreshTimer    = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const refreshTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const [token, setToken] = useState<string | null>(user?.accessToken ?? null);
+  const [loading, setLoading] = useState(user ? false : true);
 
   // ── Déconnexion ────────────────────────────────────────────────────────────
 
@@ -65,7 +70,7 @@ export const useAuth = (): UseAuthReturn => {
 
   const scheduleRefresh = useCallback((currentUser: AuthUser) => {
     clearTimeout(refreshTimer.current!);
-    const msUntilExpiry  = new Date(currentUser.expirationTime).getTime() - Date.now();
+    const msUntilExpiry = new Date(currentUser.expirationTime).getTime() - Date.now();
     const msUntilRefresh = msUntilExpiry - authService.REFRESH_MARGIN_MS;
 
     if (msUntilRefresh <= 0) {
@@ -98,6 +103,8 @@ export const useAuth = (): UseAuthReturn => {
     const events = ['mousemove', 'keydown', 'touchstart', 'click'] as const;
     events.forEach(e => window.addEventListener(e, resetInactivityTimer));
 
+    setLoading(token ? false : true);
+
     return () => {
       clearTimeout(inactivityTimer.current!);
       clearTimeout(refreshTimer.current!);
@@ -129,5 +136,5 @@ export const useAuth = (): UseAuthReturn => {
     setSiteActifState(site);
   };
 
-  return { user, siteActif, isLoading, error, login, logout, setSiteActif };
+  return { user, siteActif, isLoading, error, token,loading, login, logout, setSiteActif };
 };
