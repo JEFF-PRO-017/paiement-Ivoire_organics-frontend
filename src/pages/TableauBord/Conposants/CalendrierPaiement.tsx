@@ -1,7 +1,7 @@
 import React from 'react';
 import Flatpickr from 'react-flatpickr';
-import { HistoriquePaiement } from './types';
-import { fmtDate, fmt } from '../Utils/Utils';
+import { HistoriquePaiement } from '../../Utils/types';
+import { fmtDate, fmt } from '../../Utils/Utils';
 
 interface Props {
   joursCumules: string[];

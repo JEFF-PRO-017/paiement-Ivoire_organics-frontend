@@ -1,5 +1,5 @@
 import { api, downloadBlob, axiosBlob } from 'api/api';
-import { LignePaiement, FiltresState, StatsHistorique } from './historique.types';
+import { LignePaiement, FiltresState, StatsHistorique } from '../Hook/historique.types';
 
 export type { LignePaiement };
 

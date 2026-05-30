@@ -1,10 +1,10 @@
 import React from 'react';
 import { Badge, Card, CardBody, CardHeader, Container } from 'reactstrap';
 
-import StatsWidgets from './StatsWidgets';
-import FiltresHistorique from './FiltresHistorique';
-import TableauHistorique from './TableauHistorique';
-import { useHistoriquePaiements } from './useHistoriquePaiements';
+import StatsWidgets from './Composants/StatsWidgets';
+import FiltresHistorique from './Composants/FiltresHistorique';
+import TableauHistorique from './Composants/TableauHistorique';
+import { useHistoriquePaiements } from './Hook/useHistoriquePaiements';
 
 const HistoriquePaiements: React.FC = () => {
   document.title = 'Historique paiements | Velzon';

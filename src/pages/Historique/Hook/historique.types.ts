@@ -6,7 +6,7 @@
   ══════════════════════════════════════════════════════════════════
 */
 
-import { StatutPortefeuille } from '../types';
+import { StatutPortefeuille } from '../../Utils/types';
 
 export interface LignePaiement {
   id:          number;

@@ -2,9 +2,9 @@ import { useEffect, useState, useCallback } from 'react';
 import { toast }                            from 'react-toastify';
 import { SortingState, OnChangeFn }         from '@tanstack/react-table';
 
-import { LignePaiement, StatsHistorique, FiltresState } from './historique.types';
 import { chipToDateRange }                              from './historique.constants';
-import { historiqueService, PagedResponse }             from './historiqueService';
+import { historiqueService, LignePaiement, PagedResponse }             from '../Services/Service';
+import { StatsHistorique, FiltresState } from './historique.types';
 
 export interface UseHistoriquePaiementsReturn {
   rows:            LignePaiement[];

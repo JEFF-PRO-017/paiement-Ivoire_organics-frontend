@@ -4,7 +4,7 @@
   ══════════════════════════════════════════════════════════════════
 */
 
-import { StatutPortefeuille } from '../types';
+import { StatutPortefeuille } from '../../Utils/types';
 
 export const DEPTS = ['Tous', 'Comptabilité', 'RH', 'Technique', 'Production', 'Finance', 'Logistique'];
 

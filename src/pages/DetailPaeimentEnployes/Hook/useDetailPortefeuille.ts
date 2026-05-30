@@ -2,11 +2,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-import { HistoriquePaiement, Portefeuille, StatutPortefeuille } from '../types';
+import { HistoriquePaiement, Portefeuille, StatutPortefeuille } from '../../Utils/types';
 import { NavItem } from 'pages/Utils/Utils.model';
-import { STATUT_CLR } from './constants';
-import { portefeuilleService } from './portefeuilleService';
+
 import { fmt } from 'pages/Utils/Utils';
+import { portefeuilleService } from '../Services/Service';
+import { STATUT_CLR } from './constants';
 
 export type ActionEmpreinte = 'confirmer_rh' | 'marquer_paye';
 

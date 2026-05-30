@@ -6,8 +6,8 @@
 import React from 'react';
 import { Col, Row } from 'reactstrap';
 import Flatpickr from 'react-flatpickr';
-import { CHIPS, DEPTS } from './historique.constants';
-import { FiltresState }  from './historique.types';
+import { CHIPS, DEPTS } from '../Hook/historique.constants';
+import { FiltresState }  from '../Hook/historique.types';
 
 interface Props {
   filtres:        FiltresState;

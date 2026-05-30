@@ -2,7 +2,7 @@ import React from 'react';
 import CountUp from 'react-countup';
 import FeatherIcon from 'feather-icons-react';
 import { Card, CardBody, Col, Row } from 'reactstrap';
-import { DashboardStats } from './types';
+import { DashboardStats } from '../../Utils/types';
 
 interface Props { stats: DashboardStats; }
 

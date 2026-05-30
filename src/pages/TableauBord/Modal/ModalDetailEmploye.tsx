@@ -4,7 +4,7 @@ import {
   Modal, ModalHeader, ModalBody, ModalFooter,
   Button, Badge, Row, Col,
 } from 'reactstrap';
-import { Portefeuille, StatutEmploye } from './types';
+import { Portefeuille, StatutEmploye } from '../../Utils/types';
 import { Link } from 'react-router-dom';
 
 interface Props {

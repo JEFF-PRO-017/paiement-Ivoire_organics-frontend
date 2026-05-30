@@ -7,7 +7,7 @@ import React from 'react';
 import { Card, CardBody, Col, Row } from 'reactstrap';
 import CountUp from 'react-countup';
 import FeatherIcon from 'feather-icons-react';
-import { StatsHistorique } from './historique.types';
+import { StatsHistorique } from '../Hook/historique.types';
 
 interface Props {
     stats: StatsHistorique;

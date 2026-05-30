@@ -2,9 +2,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardBody, Badge } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
-import { Portefeuille, StatutPortefeuille, StatutEmploye } from '../types';
-import { STATUT_CLR, STATUT_ORDER} from './constants';
+import { Portefeuille, StatutPortefeuille, StatutEmploye } from '../../Utils/types';
 import { fmt, fmtDate } from 'pages/Utils/Utils';
+import { STATUT_ORDER, STATUT_CLR } from '../Hook/constants';
 
 interface Props {
   pf: Portefeuille;

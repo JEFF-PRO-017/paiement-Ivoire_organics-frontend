@@ -1,6 +1,6 @@
-import DetailPortefeuille from "pages/_Paiement/DetailPortefeuille/DetailPortefeuille";
-import HistoriquePaiements from "pages/_Paiement/historique/HistoriquePaiements";
-import DashboardPaiement from "pages/_Paiement/Index";
+import DetailPortefeuille from "pages/DetailPaeimentEnployes/Index";
+import HistoriquePaiements from "pages/Historique/Index";
+import DashboardPaiement from "pages/TableauBord/Index";
 import Login from "pages/Authentication/Login";
 import Logout from "pages/Authentication/Logout";
 import { Navigate } from "react-router-dom";

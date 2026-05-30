@@ -1,4 +1,4 @@
-import { StatutPortefeuille } from '../types';
+import { StatutPortefeuille } from "pages/Utils/types";
 
 export const STATUT_CLR: Record<StatutPortefeuille, string> = {
   [StatutPortefeuille.PAYE]:        'success',

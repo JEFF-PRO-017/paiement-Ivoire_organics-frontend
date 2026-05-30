@@ -10,7 +10,7 @@
 */
 
 import { api, axiosBlob, downloadBlob } from "api/api";
-import { Portefeuille, HistoriquePaiement, StatutPortefeuille } from "../types";
+import { Portefeuille, HistoriquePaiement, StatutPortefeuille } from "pages/Utils/types";
 
 
 

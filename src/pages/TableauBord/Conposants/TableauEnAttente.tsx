@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { Card, CardBody, CardHeader, Col, Badge } from 'reactstrap';
 import { createColumnHelper, RowSelectionState } from '@tanstack/react-table';
-import { Paginated, Portefeuille } from './types';
-import ModalDetailEmploye from './ModalDetailEmploye';
+import { Paginated, Portefeuille } from '../../Utils/types';
+import ModalDetailEmploye from '../Modal/ModalDetailEmploye';
 import TableContainer from 'pages/Components/TableContainer'; // ← adaptez le chemin
 import { useNavigate } from 'react-router';
 import { NavItem } from 'pages/Utils/Utils.model';

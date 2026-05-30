@@ -10,7 +10,7 @@
 */
 
 import { api } from 'api/api';
-import { DashboardStats, HistoriquePaiement, Paginated, Portefeuille } from './types';
+import { DashboardStats, HistoriquePaiement, Paginated, Portefeuille } from 'pages/Utils/types';
 
 export const paiementService = {
 

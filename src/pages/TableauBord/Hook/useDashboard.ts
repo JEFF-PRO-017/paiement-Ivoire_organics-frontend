@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { paiementService } from './paiementService';
-import { DashboardStats, HistoriquePaiement, Paginated, Portefeuille } from './types';
+import { DashboardStats, HistoriquePaiement, Paginated, Portefeuille } from '../../Utils/types';
+import { paiementService } from '../Services/Service';
 
 export type SectionKey = 's1' | 's2' | 's3' | 's4';
 

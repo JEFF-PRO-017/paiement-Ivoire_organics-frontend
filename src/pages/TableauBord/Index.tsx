@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Col, Container, Row } from 'reactstrap';
-import { ToastContainer } from 'react-toastify';
 
-import Widgets from './Widgets';
-import CalendrierPaiement from './CalendrierPaiement';
-import TableauEnAttente from './TableauEnAttente';
-import TableauImpayes from './TableauImpayes';
-import SectionWrapper from './SectionWrapper';
-import { useDashboard, SectionKey } from './useDashboard';
+import Widgets from './Conposants/Widgets';
+import CalendrierPaiement from './Conposants/CalendrierPaiement';
+import TableauEnAttente from './Conposants/TableauEnAttente';
+import TableauImpayes from './Conposants/TableauImpayes';
+import SectionWrapper from './Conposants/SectionWrapper';
+import { useDashboard, SectionKey } from './Hook/useDashboard';
 
 // ─── Styles injectés une seule fois dans le <head> ───────────────────────────
 const STYLES = `

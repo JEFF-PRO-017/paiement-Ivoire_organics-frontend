@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { SectionKey } from './useDashboard';
+import { SectionKey } from '../Hook/useDashboard';
 
 interface Props {
   sectionKey: SectionKey;

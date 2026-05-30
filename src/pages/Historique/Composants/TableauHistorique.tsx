@@ -7,8 +7,8 @@ import {
   useReactTable, SortingState, OnChangeFn,
 } from '@tanstack/react-table';
 
-import { LignePaiement } from './historique.types';
-import { STATUT_CLR } from './historique.constants';
+import { LignePaiement } from '../Hook/historique.types';
+import { STATUT_CLR } from '../Hook/historique.constants';
 import Pagination from 'pages/Components/Pagination';
 import { fmtDate, fmt } from '../../Utils/Utils';
 import { NavItem } from 'pages/Utils/Utils.model';

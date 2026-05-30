@@ -11,10 +11,10 @@ import multiMonthPlugin from '@fullcalendar/multimonth';
 import listPlugin from '@fullcalendar/list';
 
 import BreadCrumb from 'Components/Common/BreadCrumb';
-import EmployeSidebar from './EmployeSidebar';
-import ModalEmpreinte from './ModalEmpreinte';
-import PortefeuilleNavBar from './navigation/PortefeuilleNavBar';
-import { useDetailPortefeuille } from './useDetailPortefeuille';
+import EmployeSidebar from './Composants/EmployeSidebar';
+import ModalEmpreinte from './Composants/ModalEmpreinte';
+import PortefeuilleNavBar from './Composants/navigation/PortefeuilleNavBar';
+import { useDetailPortefeuille } from './Hook/useDetailPortefeuille';
 
 // ── Skeleton ──────────────────────────────────────────────────────────────────
 // Affiché pendant le chargement des données de l'employé
