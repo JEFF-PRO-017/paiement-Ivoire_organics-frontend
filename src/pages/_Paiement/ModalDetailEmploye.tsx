@@ -95,7 +95,8 @@ const ModalDetailEmploye: React.FC<Props> = ({ portefeuille, isOpen, toggle, onV
                 dateFormat: 'd M, Y',
                 inline: true,
                 onDayCreate: (_d, _s, _fp, dayElem) => {
-                  const iso = dayElem.dateObj.toISOString().split('T')[0];
+                  const d = dayElem.dateObj;
+                  const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
                   if ((p.periodes_paiement ?? []).includes(iso)) {
                     dayElem.classList.add('jour-cumule');
                   }
