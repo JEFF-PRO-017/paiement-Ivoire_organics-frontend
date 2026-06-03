@@ -58,7 +58,7 @@ const LABELS: Record<SectionKey, string> = {
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 const DashboardPaiement: React.FC = () => {
-  document.title = 'Paiements | ';
+  document.title = 'Paiements | IVOIRE-ORGANICS';
 
   useEffect(() => { injectStyles(); }, []);
 

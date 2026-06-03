@@ -106,9 +106,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "build-backend": "tsc -p tsconfig.backend.json",
-    "postbuild": "npm run build-backend && cp -r build/backend build/"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [

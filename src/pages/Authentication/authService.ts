@@ -30,7 +30,6 @@ export const authService = {
   async login(email: string, password: string): Promise<AuthUser> {
     const user = await api.post('/auth/login/', { email, password }) as unknown as AuthUser;
     saveUser(user);
-    // Sélectionne le premier site par défaut — injecté dans toutes les requêtes suivantes
     authService.setSiteActif(user.sites[0] ?? '');
     return user;
   },
@@ -61,10 +60,7 @@ export const authService = {
   getSiteActif: (): string | null => sessionStorage.getItem(SITE_KEY),
 
   setSiteActif(site: string): void {
-    if (!site) {
-      window.location.href = '/error/no-site';
-      return;
-    }
+    if (!site) { window.location.href = '/error/no-site'; return; }
     sessionStorage.setItem(SITE_KEY, site);
   },
 

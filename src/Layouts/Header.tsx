@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Dropdown, DropdownMenu, DropdownToggle, Form } from 'reactstrap';
 
@@ -20,8 +20,10 @@ import { useAuth } from 'pages/Authentication/useAuth';
 
 const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }: any) => {
     const dispatch = useDispatch<any>();
-    const {  siteActif,  } = useAuth();
-
+    const {  siteActif } = useAuth();
+    useEffect(()=>{
+        console.log('siteActifs',siteActif)
+    },[siteActif])
     const selectDashboardData = createSelector(
         (state) => state.Layout,
         (sidebarVisibilitytype) => sidebarVisibilitytype.sidebarVisibilitytype
@@ -82,7 +84,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }: any) => {
                                         <img src={logoSm} alt="" height="22" />
                                     </span>
                                     <span className="logo-lg">
-                                        <img src={logoDark} alt="" height="17" />
+                                        <img src={logoDark} alt="" height="64" />
                                     </span>
                                 </Link>
 
@@ -91,7 +93,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }: any) => {
                                         <img src={logoSm} alt="" height="22" />
                                     </span>
                                     <span className="logo-lg">
-                                        <img src={logoLight} alt="" height="17" />
+                                        <img src={logoLight} alt="" height="64" />
                                     </span>
                                 </Link>
                             </div>
@@ -147,7 +149,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }: any) => {
 
                             <div className="d-flex align-items-center gap-2 p-2 bg-primary-subtle rounded">
                                 <i className="ri-map-pin-line text-primary" />
-                                <span className="fw-semibold fs-13 text-primary">{siteActif}</span>
+                                {/* <span className="fw-semibold fs-13 text-primary">{siteActif}</span> */}
                             </div>
 
                         </div>

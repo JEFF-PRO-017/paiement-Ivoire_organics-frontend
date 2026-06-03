@@ -15,7 +15,7 @@ const authProtectedRoutes = [
 ];
 
 const publicRoutes = [
-  { path: "/logout",         component: <Logout /> },
+  // { path: "/logout",         component: <Logout /> },
   { path: "/login",          component: <Login /> },
   { path: "/error/no-site",  component: <NoSitePage /> },
 ];

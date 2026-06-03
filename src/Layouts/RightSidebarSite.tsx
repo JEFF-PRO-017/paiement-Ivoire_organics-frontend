@@ -11,10 +11,9 @@ const selectPreloader = createSelector(
 
 const RightSidebarSite: React.FC = () => {
     const { preloader } = useSelector(selectPreloader);
-    const { user, siteActif, setSiteActif } = useAuth();
+    const { user, siteActif, setSiteActif, logout } = useAuth();
     const [open, setOpen] = useState(false);
 
-    // Scroll-to-top
     useEffect(() => {
         const onScroll = () => {
             const el = document.getElementById('back-to-top');
@@ -26,7 +25,6 @@ const RightSidebarSite: React.FC = () => {
         return () => window.removeEventListener('scroll', onScroll);
     }, []);
 
-    // Preloader
     useEffect(() => {
         const el = document.getElementById('preloader');
         if (!el) return;
@@ -60,20 +58,18 @@ const RightSidebarSite: React.FC = () => {
                 </div>
             )}
 
-            {/* Bouton flottant */}
             <div className="customizer-setting d-none d-md-block">
                 <div onClick={() => setOpen(true)} className="btn-primary rounded-pill shadow-lg btn btn-icon btn-lg p-2">
                     <i className='mdi mdi-spin mdi-cog-outline fs-22'></i>
                 </div>
             </div>
 
-            {/* Offcanvas */}
             <Offcanvas isOpen={open} toggle={() => setOpen(false)} direction="end" className="offcanvas-end border-0" style={{ width: 300 }}>
                 <OffcanvasHeader toggle={() => setOpen(false)} className="bg-primary bg-gradient p-3 offcanvas-header-dark">
                     <span className="text-white fw-semibold">Changer de site</span>
                 </OffcanvasHeader>
 
-                <OffcanvasBody className="p-3">
+                <OffcanvasBody className="p-3 d-flex flex-column" style={{ height: '100%' }}>
 
                     {/* Utilisateur connecté */}
                     {user && (
@@ -103,7 +99,7 @@ const RightSidebarSite: React.FC = () => {
 
                     {/* Liste des sites */}
                     <p className="text-muted fs-11 text-uppercase fw-semibold mb-2">Tous les sites</p>
-                    <div className="d-flex flex-column gap-2">
+                    <div className="d-flex flex-column gap-2 flex-grow-1">
                         {(user?.sites ?? []).map((site) => {
                             const isActive = site === siteActif;
                             return (
@@ -119,6 +115,17 @@ const RightSidebarSite: React.FC = () => {
                                 </button>
                             );
                         })}
+                    </div>
+
+                    {/* Bouton Logout */}
+                    <div className="mt-3 pt-3 border-top">
+                        <button
+                            onClick={() => logout()}
+                            className="btn btn-danger w-100 d-flex align-items-center justify-content-center gap-2"
+                        >
+                            <i className="ri-logout-box-r-line fs-16" />
+                            <span className="fw-semibold">Se déconnecter</span>
+                        </button>
                     </div>
 
                 </OffcanvasBody>

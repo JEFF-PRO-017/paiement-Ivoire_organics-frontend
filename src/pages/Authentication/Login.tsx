@@ -52,9 +52,9 @@ const Login: React.FC = () => {
               <Col lg={12}>
                 <div className="text-center mt-sm-5 mb-4 text-white-50">
                   <Link to="/" className="d-inline-block auth-logo">
-                    <img src={logoLight} alt="Ivoire Organics" height="28" />
+                    <img src={logoLight} alt="Ivoire Organics" height="100" />
                   </Link>
-                  <p className="mt-3 fs-15 fw-medium">Gestion des paiements</p>
+                  {/* <p className="mt-3 fs-15 fw-medium">Gestion des paiements</p> */}
                 </div>
               </Col>
             </Row>
@@ -82,9 +82,9 @@ const Login: React.FC = () => {
                     )}
 
                     {/* Indice mock (retirer en production) */}
-                    <Alert color="info" className="fs-12 py-2">
+                    {/* <Alert color="info" className="fs-12 py-2">
                       <strong>Demo :</strong> admin@ivoireorganics.com / admin123
-                    </Alert>
+                    </Alert> */}
 
                     <div className="p-2">
                       <Form onSubmit={form.handleSubmit} noValidate>
@@ -178,14 +178,14 @@ const Login: React.FC = () => {
                 </Card>
 
                 {/* Lien inscription */}
-                <div className="mt-4 text-center">
+                {/* <div className="mt-4 text-center">
                   <p className="mb-0 text-muted fs-13">
                     Pas encore de compte ?{' '}
                     <Link to="/register" className="fw-semibold text-primary text-decoration-underline">
                       Créer un compte
                     </Link>
                   </p>
-                </div>
+                </div> */}
 
               </Col>
             </Row>

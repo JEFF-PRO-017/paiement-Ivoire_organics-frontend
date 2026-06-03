@@ -5,9 +5,9 @@ import { useAuth } from "pages/Authentication/useAuth";
 const AuthProtected = (props: any) => {
   const { user, loading } = useAuth();
 
-  if (loading) {
-    return null; // ou un spinner
-  }
+  // if (loading) {
+  //   return null; // ou un spinner
+  // }
 
   if (!user) {
     return <Navigate to={{ pathname: "/login" }} />;
