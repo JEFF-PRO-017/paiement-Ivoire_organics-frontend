@@ -7,7 +7,7 @@ import TableauHistorique from './Composants/TableauHistorique';
 import { useHistoriquePaiements } from './Hook/useHistoriquePaiements';
 
 const HistoriquePaiements: React.FC = () => {
-  document.title = 'Historique paiements | Velzon';
+  document.title = 'Historique paiements | Ivoire Organics';  // Titre de page générique
 
   const {
     rows, stats, isLoading,          // ← plus paginated/filtered

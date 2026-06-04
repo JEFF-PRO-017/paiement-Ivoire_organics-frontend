@@ -86,7 +86,7 @@ export const useDetailPortefeuille = (): UseDetailPortefeuilleReturn => {
 
     useEffect(() => {
         if (pf?.employe?.nom_complet) {
-            document.title = `${pf.employe.nom_complet} | Portefeuille | Velzon`;
+            document.title = `${pf.employe.nom_complet} | Portefeuille #${pf.id}`;
         }
     }, [pf?.employe?.nom_complet]);
 

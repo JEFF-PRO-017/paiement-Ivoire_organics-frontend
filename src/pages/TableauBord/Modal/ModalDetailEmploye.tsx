@@ -29,7 +29,7 @@ const ModalDetailEmploye: React.FC<Props> = ({ portefeuille, isOpen, toggle, onV
       <ModalHeader toggle={toggle} className="border-0 pb-0 align-items-start">
         {emp && (
           <div className="d-flex align-items-center gap-3">
-            {/* Avatar initiales — pattern Velzon */}
+            {/* Avatar initiales — pattern  */}
             <div className="avatar-sm flex-shrink-0">
               <span className="avatar-title rounded-circle bg-primary-subtle text-primary fw-medium fs-16">
                 {initiales}

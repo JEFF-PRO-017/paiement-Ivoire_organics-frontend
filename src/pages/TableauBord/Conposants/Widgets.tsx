@@ -38,7 +38,7 @@ const Widgets: React.FC<Props> = ({ stats }) => (
     <Row>
       {ITEMS.map(item => (
         <Col xl={4} key={item.key}>
-          {/* card-animate : effet hover natif Velzon */}
+          {/* card-animate : effet hover natif  */}
           <Card className="card-animate border-0 shadow-none"
             style={{ borderTop: `3px solid var(--vz-${item.color})` }}>
             <CardBody>

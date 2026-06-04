@@ -34,7 +34,7 @@ const SectionWrapper: React.FC<Props> = ({
 
   return (
     <div className={`section-wrapper position-relative ${cls}`}>
-      {/* Croix Velzon — opacity 0 par défaut, 1 au survol via dashboard.scss */}
+      {/* Croix  — opacity 0 par défaut, 1 au survol via dashboard.scss */}
       <button
         className="btn-close-section btn btn-icon btn-sm btn-soft-danger position-absolute top-0 end-0 m-2"
         title={`Masquer ${label}`}
