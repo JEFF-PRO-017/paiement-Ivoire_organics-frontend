@@ -3,10 +3,11 @@ import { environment } from 'environments/environment';
 
 const BASE_URL = environment.API_URL;
 const SITE_KEY = 'io_active_site';
+const USER_KEY = 'authUser'
 
 // ── Helpers session ───────────────────────────────────────────────────────────
 
-const getUser = () => JSON.parse(sessionStorage.getItem('authUser') ?? '{}');
+const getUser = () => JSON.parse(sessionStorage.getItem(USER_KEY) ?? '{}');
 const getSite = () => sessionStorage.getItem(SITE_KEY);
 
 const injectHeaders = (config: any) => {
@@ -80,7 +81,7 @@ api.interceptors.response.use(
         }) as any;
 
         const updated = { ...user, accessToken };
-        sessionStorage.setItem('authUser', JSON.stringify(updated));
+        sessionStorage.setItem(USER_KEY, JSON.stringify(updated));
 
         flushQueue(accessToken);
         original.headers.Authorization = `Bearer ${accessToken}`;
@@ -88,7 +89,7 @@ api.interceptors.response.use(
 
       } catch (refreshError) {
         flushQueue(null, refreshError);
-        sessionStorage.removeItem('authUser');
+        sessionStorage.removeItem(USER_KEY);
         sessionStorage.removeItem(SITE_KEY);
         window.location.href = '/login';
         return Promise.reject(refreshError);

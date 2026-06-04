@@ -126,7 +126,7 @@ const EmployeSidebar: React.FC<Props> = ({ pf, loading, onOuvrirEmpreinte, onRes
               </CardBody>
             </Card>
 
-            <Card className="mb-3">
+            {/* <Card className="mb-3">
               <CardBody>
                 <div className="acitivity-timeline acitivity-main">
                   {ETAPES.map((e, i) => {
@@ -152,7 +152,7 @@ const EmployeSidebar: React.FC<Props> = ({ pf, loading, onOuvrirEmpreinte, onRes
                   })}
                 </div>
               </CardBody>
-            </Card>
+            </Card> */}
             <CardBody className="bg-info-subtle mt-3">
               <div className="py-2 p-3 rounded-2 ">
                 <h6 className="text-muted fs-15 fw-medium mb-2">Légende du calendrier</h6>
