@@ -67,7 +67,7 @@ const TableauImpayes: React.FC<Props> = ({
     col.accessor('nombre_jours_impayes', {
       header: 'Jours',
       cell: ({ getValue }) => (
-        <Badge color="danger" className="bg-danger-subtle text-danger">{getValue()} j</Badge>
+        <Badge  className="bg-white-subtle text-white">{getValue()} j</Badge>
       ),
     }),
     col.accessor(r => r.nombre_jours_impayes * r.montant_journalier, {
@@ -78,7 +78,7 @@ const TableauImpayes: React.FC<Props> = ({
       id: 'payer', header: 'Payer',
       cell: ({ row }) => (
         <button
-          className="btn btn-soft-danger btn-sm d-flex align-items-center gap-1"
+          className="btn btn-outline-danger btn-sm d-flex align-items-center gap-1"
           onClick={() => handleRowClick(row.original, rows)}>
           <i className="ri-bank-card-line" /> Payer
         </button>
@@ -88,7 +88,7 @@ const TableauImpayes: React.FC<Props> = ({
       id: 'detail', header: 'Détail',
       cell: ({ row }) => (
         <button
-          className="btn btn-soft-danger btn-sm d-flex align-items-center gap-1"
+          className="btn btn-outline-danger btn-sm d-flex align-items-center gap-1"
           onClick={() => setModal(row.original)}
         >
           <i className="ri-eye-line" /> Voir

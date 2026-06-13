@@ -23,7 +23,7 @@ const WIDGETS = [
 const StatsWidgets: React.FC<Props> = ({ stats }) => (
     <Row className="mb-3">
         {WIDGETS.map(w => (
-            <Col xl={3} key={w.key}>
+            <Col lg={3} key={w.key}>
                 <Card className="card-animate">
                     <CardBody>
                         <div className="d-flex align-items-center">

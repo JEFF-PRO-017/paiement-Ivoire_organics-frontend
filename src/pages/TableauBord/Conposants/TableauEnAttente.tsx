@@ -83,7 +83,7 @@ const TableauEnAttente: React.FC<Props> = ({
     col.accessor('nombre_jours_impayes', {
       header: 'Jours',
       cell: ({ getValue }) => (
-        <Badge color="warning" className="bg-warning-subtle text-warning">{getValue()} j</Badge>
+        <Badge   className="bg-white-subtle text-white">{getValue()} j</Badge>
       ),
     }),
     col.accessor(r => r.nombre_jours_impayes * r.montant_journalier, {
@@ -93,7 +93,7 @@ const TableauEnAttente: React.FC<Props> = ({
     col.display({
       id: 'confirmer', header: 'Confirmer',
       cell: ({ row }) => (
-        <button className="btn btn-soft-success btn-sm d-flex align-items-center gap-1"
+        <button className="btn btn-outline-success btn-sm d-flex align-items-center gap-1"
           onClick={() => onConfirmerRH([row.original.id])}>
           <i className="ri-check-line" /> Confirmer
         </button>
@@ -102,7 +102,7 @@ const TableauEnAttente: React.FC<Props> = ({
     col.display({
       id: 'detail', header: 'Détail',
       cell: ({ row }) => (
-        <button className="btn btn-soft-warning btn-sm d-flex align-items-center gap-1"
+        <button className="btn btn-outline-warning btn-sm d-flex align-items-center gap-1"
           onClick={() => setModal(row.original)}>
           <i className="ri-eye-line" /> Voir
         </button>
@@ -132,7 +132,7 @@ const TableauEnAttente: React.FC<Props> = ({
             <div className="d-flex align-items-center gap-2 flex-grow-1">
               <div className="rounded-1" style={{ width: 4, height: 20, background: 'var(--vz-warning)' }} />
               <h4 className="card-title mb-0">Portefeuilles en attente</h4>
-              <Badge color="warning" className="bg-warning-subtle text-warning">{total}</Badge>
+              <Badge>{total}</Badge>
             </div>
 
             {/* Barre de sélection groupée */}

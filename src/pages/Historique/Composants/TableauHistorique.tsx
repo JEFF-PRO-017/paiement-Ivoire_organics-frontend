@@ -74,7 +74,7 @@ const TableauHistorique: React.FC<Props> = ({
     col.accessor('nombre_jours', {
       header: 'Jours payés',
       cell: ({ getValue }) => (
-        <Badge color="warning" className="bg-warning-subtle text-warning">{getValue()} j</Badge>
+        <Badge  className="bg-white-subtle text-white">{getValue()} j</Badge>
       ),
     }),
     col.accessor('montant_total', {
@@ -95,7 +95,7 @@ const TableauHistorique: React.FC<Props> = ({
         <div className="d-flex gap-1">
           <button
             onClick={() => handleRowClick(row.original, data)}  // ← passer la ligne cliquée et les données actuelles
-            className="btn btn-soft-primary btn-sm d-flex align-items-center gap-1"
+            className="btn btn-outline-primary btn-sm d-flex align-items-center gap-1"
           >
             <i className="ri-eye-line" />Détail
           </button>

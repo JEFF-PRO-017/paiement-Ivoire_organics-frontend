@@ -127,7 +127,7 @@ const TableContainer: React.FC<TableContainerProps> = ({
   theadClass = 'bg-light text-muted',
   trClass    = '',
   thClass    = '',
-  divClass   = 'table-responsive table-card',
+  divClass   = 'table-responsive table-card ',
   isBordered,
 }) => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -245,13 +245,13 @@ const TableContainer: React.FC<TableContainerProps> = ({
               {isExport && (
                 <Col sm={3} className="d-flex justify-content-sm-end gap-2">
                   <button
-                    className="btn btn-soft-success btn-sm d-flex align-items-center gap-1"
+                    className="btn btn-outline-success btn-sm d-flex align-items-center gap-1"
                     onClick={exportExcel}
                   >
                     <i className="ri-file-excel-2-line" /> Excel
                   </button>
                   <button
-                    className="btn btn-soft-danger btn-sm d-flex align-items-center gap-1"
+                    className="btn btn-outline-danger btn-sm d-flex align-items-center gap-1"
                     onClick={exportPdf}
                   >
                     <i className="ri-file-pdf-line" /> PDF

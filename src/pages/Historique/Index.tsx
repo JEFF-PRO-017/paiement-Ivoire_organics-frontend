@@ -37,14 +37,14 @@ const HistoriquePaiements: React.FC = () => {
 
               <div className="d-flex gap-2">
                 <button
-                  className="btn btn-soft-success btn-sm d-flex align-items-center gap-1"
+                  className="btn btn-outline-success btn-sm d-flex align-items-center gap-1"
                   onClick={handleExportCSV}
                   disabled={isLoading || totalCount === 0}
                 >
                   <i className="ri-file-excel-line" />Exporter CSV
                 </button>
                 <button
-                  className="btn btn-soft-danger btn-sm d-flex align-items-center gap-1"
+                  className="btn btn-outline-danger btn-sm d-flex align-items-center gap-1"
                   onClick={handleExportPDF}
                   disabled={isLoading || totalCount === 0}
                 >

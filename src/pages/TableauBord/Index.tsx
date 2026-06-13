@@ -121,7 +121,7 @@ const DashboardPaiement: React.FC = () => {
           {/* ── Layout 8/12 + 4/12 ── */}
           <Row className="project-wrapper">
 
-            <Col xxl={ws1_s3}>
+            <Col lg={ws1_s3}>
 
               {/* Section 1 — Widgets */}
               <SectionWrapper
@@ -154,7 +154,7 @@ const DashboardPaiement: React.FC = () => {
 
             </Col>
 
-            <Col xxl={ws2}>
+            <Col lg={ws2}>
               {/* Section 2 — Calendrier */}
               <SectionWrapper
                 sectionKey="s2" label="Calendrier"
