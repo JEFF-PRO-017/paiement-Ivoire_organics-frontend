@@ -2,51 +2,15 @@ import axios from 'axios';
 import { environment } from 'environments/environment';
 
 const BASE_URL = environment.API_URL;
-const SITE_KEY = 'io_active_site';
-const USER_KEY = 'authUser'
-
-// ── Helpers session ───────────────────────────────────────────────────────────
-
-const getUser = () => JSON.parse(sessionStorage.getItem(USER_KEY) ?? '{}');
-const getSite = () => sessionStorage.getItem(SITE_KEY);
+const REDIRECT_KEY = 'redirectAfterLogin';
 
 const injectHeaders = (config: any) => {
-  const user = getUser();
-  const site = getSite();
-  const isAuthRoute = config.url?.startsWith('/auth/');
-
-  if (user?.accessToken) {
-    config.headers.Authorization = `Bearer ${user.accessToken}`;
-  }
-
-  if (!isAuthRoute) {
-    if (!site) {
-      window.location.href = '/error/no-site';
-      return Promise.reject(new Error('Aucun site actif sélectionné'));
-    }
-    // config.headers['X-Site'] = site;
-  }
-
+  const token = localStorage.getItem('token');
+  if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 };
 
-// ── Refresh token state ───────────────────────────────────────────────────────
-
-let isRefreshing = false;
-let pendingQueue: Array<{
-  resolve: (token: string) => void;
-  reject:  (err: unknown)  => void;
-}> = [];
-
-const flushQueue = (token: string | null, err: unknown = null) => {
-  pendingQueue.forEach(({ resolve, reject }) =>
-    token ? resolve(token) : reject(err)
-  );
-  pendingQueue = [];
-};
-
-// ── Instance principale ───────────────────────────────────────────────────────
-
+// ── Instance principale ─────────────────────────────────────────────────
 export const api = axios.create({
   baseURL: BASE_URL,
   headers: { 'Content-Type': 'application/json' },
@@ -55,51 +19,30 @@ export const api = axios.create({
 api.interceptors.request.use(injectHeaders);
 
 api.interceptors.response.use(
-  (response) => response.data ?? response,
+  (response) => {
+    // Le back renouvelle le token à chaque requête réussie
+    const newToken = response.headers['x-new-access-token'];
+    if (newToken) localStorage.setItem('token', newToken);
+    console.log('response',response)
+    return response.data ?? response;
+  },
   async (error) => {
-    const original = error.config;
-
-    // 401 → tentative de refresh
+    const original = error.config ?? {};
     if (error.response?.status === 401 && !original._retry) {
       original._retry = true;
 
-      if (isRefreshing) {
-        return new Promise((resolve, reject) => {
-          pendingQueue.push({ resolve, reject });
-        }).then(token => {
-          original.headers.Authorization = `Bearer ${token}`;
-          return api(original);
-        });
+      // On garde la page courante pour y revenir après login
+      const from = window.location.pathname + window.location.search;
+      if (!window.location.pathname.startsWith('/login')) {
+        sessionStorage.setItem(REDIRECT_KEY, from);
       }
 
-      isRefreshing = true;
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
 
-      try {
-        const user = getUser();
-        const { accessToken } = await api.post('/auth/refresh/', {
-          refreshToken: user.refreshToken,
-        }) as any;
-
-        const updated = { ...user, accessToken };
-        sessionStorage.setItem(USER_KEY, JSON.stringify(updated));
-
-        flushQueue(accessToken);
-        original.headers.Authorization = `Bearer ${accessToken}`;
-        return api(original);
-
-      } catch (refreshError) {
-        flushQueue(null, refreshError);
-        sessionStorage.removeItem(USER_KEY);
-        sessionStorage.removeItem(SITE_KEY);
-        window.location.href = '/login';
-        return Promise.reject(refreshError);
-
-      } finally {
-        isRefreshing = false;
-      }
     }
 
-    // Autres erreurs → normalisation
     const msg =
       error.response?.data?.detail ??
       error.response?.data?.message ??
@@ -107,7 +50,7 @@ api.interceptors.response.use(
         switch (error.response?.status) {
           case 500: return 'Internal Server Error';
           case 404: return 'Ressource introuvable';
-          default:  return error.message ?? 'Erreur réseau';
+          default: return error.message ?? 'Erreur réseau';
         }
       })();
 
@@ -115,8 +58,7 @@ api.interceptors.response.use(
   }
 );
 
-// ── Instance Blob (PDF / CSV) ─────────────────────────────────────────────────
-
+// ── Instance Blob (PDF / CSV) ───────────────────────────────────────────
 export const axiosBlob = axios.create({
   baseURL: BASE_URL,
   responseType: 'blob',
@@ -124,8 +66,7 @@ export const axiosBlob = axios.create({
 
 axiosBlob.interceptors.request.use(injectHeaders);
 
-// ── Helper téléchargement ─────────────────────────────────────────────────────
-
+// ── Helper téléchargement ───────────────────────────────────────────────
 export function downloadBlob(blob: Blob, filename: string): void {
   const url = URL.createObjectURL(blob);
   Object.assign(document.createElement('a'), { href: url, download: filename }).click();

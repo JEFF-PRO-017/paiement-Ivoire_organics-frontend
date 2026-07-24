@@ -11,7 +11,7 @@ const selectPreloader = createSelector(
 
 const RightSidebarSite: React.FC = () => {
     const { preloader } = useSelector(selectPreloader);
-    const { user, siteActif, setSiteActif, logout } = useAuth();
+    const { user, logout } = useAuth();
     const [open, setOpen] = useState(false);
 
     useEffect(() => {
@@ -87,7 +87,7 @@ const RightSidebarSite: React.FC = () => {
                     )}
 
                     {/* Site actif */}
-                    {siteActif && (
+                    {/* {siteActif && (
                         <div className="mb-3">
                             <p className="text-muted fs-11 text-uppercase fw-semibold mb-1">Site actif</p>
                             <div className="d-flex align-items-center gap-2 p-2 bg-primary-subtle rounded">
@@ -95,12 +95,12 @@ const RightSidebarSite: React.FC = () => {
                                 <span className="fw-semibold fs-13 text-primary">{siteActif}</span>
                             </div>
                         </div>
-                    )}
+                    )} */}
 
                     {/* Liste des sites */}
                     <p className="text-muted fs-11 text-uppercase fw-semibold mb-2">Tous les sites</p>
                     <div className="d-flex flex-column gap-2 flex-grow-1">
-                        {(user?.sites ?? []).map((site) => {
+                        {/* {(user?.sites ?? []).map((site) => {
                             const isActive = site === siteActif;
                             return (
                                 <button
@@ -114,7 +114,7 @@ const RightSidebarSite: React.FC = () => {
                                     {isActive && <i className="ri-check-line text-white" />}
                                 </button>
                             );
-                        })}
+                        })} */}
                     </div>
 
                     {/* Bouton Logout */}

@@ -1,140 +1,104 @@
-/*
-  ══════════════════════════════════════════════════════════════════
-  useAuth.ts
-  ══════════════════════════════════════════════════════════════════
-  Centralise :
-    • État utilisateur + site actif
-    • Login / Logout
-    • Refresh token automatique (avant expiration)
-    • Déconnexion par inactivité (mouse, keydown, touchstart)
-    • Déconnexion à la fermeture de l'onglet (sessionStorage natif)
-  ══════════════════════════════════════════════════════════════════
-*/
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+} from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { authService, AuthUser } from "./authService";
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { AuthUser, authService } from './authService';
-// ── Types ─────────────────────────────────────────────────────────────────────
-
-export interface UseAuthReturn {
+interface AuthContextType {
   user: AuthUser | null;
-  siteActif: string | null;
-  isLoading: boolean;
-  error: string | null;
-  token: string | null;
   loading: boolean;
+  error: string | null;
+  token: () => string | null;
   login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
-  setSiteActif: (site: string) => void;
+  logout: (reason?: string) => void;
+  setToken: (newToken: string) => void;
 }
 
-// ── Hook ──────────────────────────────────────────────────────────────────────
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const useAuth = (): UseAuthReturn => {
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
 
-  const [user, setUser] = useState<AuthUser | null>(authService.getUser());
-  const [siteActif, setSiteActifState] = useState<string | null>(authService.getSiteActif());
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const inactivityTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const refreshTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const setToken = (newToken: string) => {
+    localStorage.setItem("token", newToken);
+  };
 
-  const [token, setToken] = useState<string | null>(user?.accessToken ?? null);
-  const [loading, setLoading] = useState(user ? false : true);
+  const token = (): string | null => {
+    return localStorage.getItem("token");
+  };
 
-  // ── Déconnexion ────────────────────────────────────────────────────────────
-
-  const logout = useCallback((reason?: string) => {
-    authService.logout();
-    setUser(null);
-    setSiteActifState(null);
-    clearTimeout(inactivityTimer.current!);
-    clearTimeout(refreshTimer.current!);
-    if (reason) toast.info(reason);
-    navigate('/login');
-  }, [navigate]);
-
-  // ── Minuterie d'inactivité ─────────────────────────────────────────────────
-
-  const resetInactivityTimer = useCallback(() => {
-    clearTimeout(inactivityTimer.current!);
-    inactivityTimer.current = setTimeout(() => {
-      logout('Session expirée par inactivité. Veuillez vous reconnecter.');
-    }, authService.INACTIVITY_MS);
-  }, [logout]);
-
-  // ── Refresh token automatique ──────────────────────────────────────────────
-
-  const scheduleRefresh = useCallback((currentUser: AuthUser) => {
-    clearTimeout(refreshTimer.current!);
-    const msUntilExpiry = new Date(currentUser.expirationTime).getTime() - Date.now();
-    const msUntilRefresh = msUntilExpiry - authService.REFRESH_MARGIN_MS;
-
-    if (msUntilRefresh <= 0) {
-      // Token déjà proche de l'expiration — refresh immédiat
-      authService.refreshToken()
-        .then(updated => { setUser(updated); scheduleRefresh(updated); })
-        .catch(() => logout('Votre session a expiré. Veuillez vous reconnecter.'));
-      return;
+  const user = (): AuthUser | null => {
+    const storedUser = localStorage.getItem("user");
+    if (!storedUser) {
+      return null;
     }
-
-    refreshTimer.current = setTimeout(async () => {
-      try {
-        const updated = await authService.refreshToken();
-        setUser(updated);
-        scheduleRefresh(updated);
-      } catch {
-        logout('Votre session a expiré. Veuillez vous reconnecter.');
-      }
-    }, msUntilRefresh);
-  }, [logout]);
-
-  // ── Mise en place des timers quand l'utilisateur change ───────────────────
-
-  useEffect(() => {
-    if (!user) return;
-
-    scheduleRefresh(user);
-    resetInactivityTimer();
-
-    const events = ['mousemove', 'keydown', 'touchstart', 'click'] as const;
-    events.forEach(e => window.addEventListener(e, resetInactivityTimer));
-
-    setLoading(token ? false : true);
-
-    return () => {
-      clearTimeout(inactivityTimer.current!);
-      clearTimeout(refreshTimer.current!);
-      events.forEach(e => window.removeEventListener(e, resetInactivityTimer));
-    };
-  }, [user, scheduleRefresh, resetInactivityTimer]);
-
-  // ── Login ──────────────────────────────────────────────────────────────────
-
-  const login = async (email: string, password: string): Promise<void> => {
-    setIsLoading(true);
-    setError(null);
     try {
-      const loggedUser = await authService.login(email, password);
-      setUser(loggedUser);
-      setSiteActifState(authService.getSiteActif());
-      navigate('/dashboard');
-    } catch (e: any) {
-      setError(e?.message ?? 'Erreur de connexion');
-    } finally {
-      setIsLoading(false);
+      return JSON.parse(storedUser) as AuthUser;
+    } catch {
+      return null;
     }
   };
 
-  // ── Changer de site actif ──────────────────────────────────────────────────
 
-  const setSiteActif = (site: string) => {
-    authService.setSiteActif(site);
-    setSiteActifState(site);
+  const login = async (
+    email: string,
+    password: string
+  ): Promise<void> => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const u = await authService.login(email, password);
+      console.log('user auth', u)
+      localStorage.setItem("user", JSON.stringify(u));
+      setToken(u.auth.accessToken);
+      navigate("/dashboard");
+    } catch (e: any) {
+      const message = e?.message ?? "Erreur de connexion";
+      setError(message);
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  return { user, siteActif, isLoading, error, token,loading, login, logout, setSiteActif };
+  const logout = async (reason?: string) => {
+    debugger
+    try {
+      setLoading(true)
+      await authService.logout();
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      if (reason) {
+        toast.info(reason);
+      }
+      navigate("/login");
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(true)
+    }
+  };
+
+
+  return React.createElement(AuthContext.Provider, { value: { user: user(), loading, error, token, login, logout, setToken } }, children,);
+};
+
+export const useAuth = (): AuthContextType => {
+  const context = useContext(AuthContext);
+
+  if (!context) {
+    throw new Error(
+      "useAuth doit être utilisé à l'intérieur d'un <AuthProvider>"
+    );
+  }
+
+  return context;
 };

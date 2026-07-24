@@ -26,7 +26,7 @@ import logoLight from '../../assets/images/logo-light.png';
 const Login: React.FC = () => {
   document.title = 'Connexion | Ivoire Organics — Gestion des paiements';
 
-  const { login, isLoading, error } = useAuth();
+  const { login, loading, error } = useAuth();
   const [passwordShow, setPasswordShow] = useState(false);
 
   const form = useFormik({
@@ -81,10 +81,6 @@ const Login: React.FC = () => {
                       </Alert>
                     )}
 
-                    {/* Indice mock (retirer en production) */}
-                    {/* <Alert color="info" className="fs-12 py-2">
-                      <strong>Demo :</strong> admin@ivoireorganics.com / admin123
-                    </Alert> */}
 
                     <div className="p-2">
                       <Form onSubmit={form.handleSubmit} noValidate>
@@ -164,9 +160,9 @@ const Login: React.FC = () => {
                           color="success"
                           type="submit"
                           className="w-100"
-                          disabled={isLoading}
+                          disabled={loading}
                         >
-                          {isLoading
+                          {loading
                             ? <><Spinner size="sm" className="me-2" />Connexion…</>
                             : 'Se connecter'
                           }
@@ -176,16 +172,6 @@ const Login: React.FC = () => {
                     </div>
                   </CardBody>
                 </Card>
-
-                {/* Lien inscription */}
-                {/* <div className="mt-4 text-center">
-                  <p className="mb-0 text-muted fs-13">
-                    Pas encore de compte ?{' '}
-                    <Link to="/register" className="fw-semibold text-primary text-decoration-underline">
-                      Créer un compte
-                    </Link>
-                  </p>
-                </div> */}
 
               </Col>
             </Row>

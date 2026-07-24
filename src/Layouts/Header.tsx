@@ -20,10 +20,10 @@ import { useAuth } from 'pages/Authentication/useAuth';
 
 const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }: any) => {
     const dispatch = useDispatch<any>();
-    const {  siteActif } = useAuth();
-    useEffect(()=>{
-        console.log('siteActifs',siteActif)
-    },[siteActif])
+    // const {  siteActif } = useAuth();
+    // useEffect(()=>{
+    //     console.log('siteActifs',siteActif)
+    // },[siteActif])
     const selectDashboardData = createSelector(
         (state) => state.Layout,
         (sidebarVisibilitytype) => sidebarVisibilitytype.sidebarVisibilitytype

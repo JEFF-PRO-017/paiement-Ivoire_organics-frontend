@@ -32,4 +32,6 @@ export const portefeuilleService = {
     const blob = await axiosBlob.get(`/portefeuilles/${id}/export-pdf/`);
     downloadBlob(blob as unknown as Blob, `portefeuille-${id}.pdf`);
   },
+
+  
 };

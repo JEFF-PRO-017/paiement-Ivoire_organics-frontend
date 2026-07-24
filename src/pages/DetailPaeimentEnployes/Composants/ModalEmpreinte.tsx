@@ -1,36 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
 
-/*
-  ══════════════════════════════════════════════════════════════════
-  FONCTIONNEMENT DU TERMINAL USB À EMPREINTE DIGITALE
-  ══════════════════════════════════════════════════════════════════
-
-  1. L'employé pose son doigt sur le lecteur USB (type HID).
-  2. Le terminal envoie les données brutes au back-end.
-  3. Le back-end compare avec le template stocké pour cet employé.
-  4. Ce composant poll régulièrement l'endpoint de vérification.
-
-  ENDPOINT À IMPLÉMENTER :
-    GET /empreinte/verify?employe_id=:id
-    Headers: Authorization: Bearer <token>
-    Réponse OK  : { verified: true,  employe_id: number }
-    Réponse KO  : { verified: false, message: string }
-    Réponse 404 : employé inconnu ou terminal non connecté
-
-  POLLING :
-    - Intervalle : 1 500 ms (ajustable via POLL_INTERVAL_MS)
-    - Démarre à l'ouverture de la modal
-    - S'arrête dès que verified === true ou que la modal est fermée
-
-  ALTERNATIVE (si WebSocket préféré) :
-    Remplacer le polling par :
-      const ws = new WebSocket('ws://your-api/empreinte/stream');
-      ws.onmessage = (e) => { if (JSON.parse(e.data).verified) setEmpreinteOk(true); };
-      return () => ws.close();
-
-  ══════════════════════════════════════════════════════════════════
-*/
 
 const POLL_INTERVAL_MS = 1_500;
 

@@ -101,7 +101,7 @@ export const useDetailPortefeuille = (): UseDetailPortefeuilleReturn => {
         const historiqueEvents: CalendarEvent[] = historique.map((h) => h?.periodes_paiement.map((iso) => ({
             id: `paiement-${h.id}`,
             title: `${h.statut} · ${h.nombre_jours} j · ${fmt(h.montant_total)}`,
-             start: new Date(iso), allDay: true,
+            start: new Date(iso), allDay: true,
             className: `bg-${STATUT_CLR[h.statut]}-subtle text-${STATUT_CLR[h.statut]} border-0`,
         }))).flat() || [];
 

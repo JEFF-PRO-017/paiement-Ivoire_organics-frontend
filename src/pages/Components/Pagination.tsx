@@ -58,7 +58,7 @@ function usePagination(
 
 // ─── Composant ────────────────────────────────────────────────────────────────
 
-const DEFAULT_PAGE_SIZE_OPTIONS = [5,10, 25, 50, 100,500];
+const DEFAULT_PAGE_SIZE_OPTIONS = [5,10, 25, 50, 100];
 
 const Pagination: React.FC<PaginationProps> = ({
   page,
