@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import Flatpickr from 'react-flatpickr';
 import { HistoriquePaiement } from '../../Utils/types';
 import { fmtDate, fmt } from '../../Utils/Utils';
@@ -11,6 +11,10 @@ interface Props {
 const CalendrierPaiement: React.FC<Props> = ({ joursCumules, historique }) => {
   console.log('joursCumules', joursCumules, historique);
 
+  const joursCumulesSet = useMemo(
+    () => new Set(joursCumules.map(j => j.slice(0, 10))),
+    [joursCumules],
+  );
   return (
     <React.Fragment>
       <div className=" w-100 card card-height-100">
@@ -33,9 +37,8 @@ const CalendrierPaiement: React.FC<Props> = ({ joursCumules, historique }) => {
                 inline: true,
                 onDayCreate: (_d, _s, _fp, dayElem) => {
                   const d = dayElem.dateObj;
-                  // ✅ Utiliser la date locale, pas UTC
                   const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-                  if (joursCumules.includes(iso)) dayElem.classList.add('jour-cumule');
+                  if (joursCumulesSet.has(iso)) dayElem.classList.add('jour-cumule');
                 },
               }}
             />

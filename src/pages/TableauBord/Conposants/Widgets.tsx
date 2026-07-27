@@ -16,20 +16,20 @@ const ITEMS = [
     suffix:  '',
   },
   {
-    key:     'total_jours_cumules'  as keyof DashboardStats,
-    label:   'Jours cumulés',
-    caption: 'Total jours impayés',
+    key:     'somme_totale_en_attente'  as keyof DashboardStats,
+    label:   'Somme non Confimée',
+    caption: 'En attente de confirmation',
     icon:    'calendar',
     color:   'warning',
-    suffix:  ' j',
+    suffix:  ' XOF',
   },
   {
-    key:     'somme_totale_a_payer' as keyof DashboardStats,
-    label:   'Somme à payer',
+    key:     'somme_totale_impaye' as keyof DashboardStats,
+    label:   'Somme Confimée',
     caption: 'Montant à décaisser',
     icon:    'credit-card',
     color:   'success',
-    suffix:  ' F',
+    suffix:  ' XOF',
   },
 ];
 

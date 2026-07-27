@@ -1,17 +1,23 @@
 import React, { useMemo, useState } from 'react';
 import { Card, CardBody, CardHeader, Col, Badge } from 'reactstrap';
 import { createColumnHelper, RowSelectionState } from '@tanstack/react-table';
-import { Paginated, Portefeuille } from '../../Utils/types';
+import { PaginatedResponse, EmployeAttendanceGroup } from '../../Utils/types';
 import ModalDetailEmploye from '../Modal/ModalDetailEmploye';
-import TableContainer from 'pages/Components/TableContainer'; // ← adaptez le chemin
+import TableContainer from 'pages/Components/TableContainer';
 import { useNavigate } from 'react-router';
 import { NavItem } from 'pages/Utils/Utils.model';
 
-const col = createColumnHelper<Portefeuille>();
+const col = createColumnHelper<EmployeAttendanceGroup>();
 const fmt = (n: number) => n.toLocaleString('fr-FR') + ' F';
 
+// dérivés : la liste d'attendance remplace les champs directs de l'ancien Portefeuille
+const nbJours = (g: EmployeAttendanceGroup) => g.attendance_list.length;
+const montantTotal = (g: EmployeAttendanceGroup) =>
+  g.attendance_list.reduce((acc, a) => acc + parseFloat(a.montant_journalier), 0);
+const attendanceIds = (g: EmployeAttendanceGroup) => g.attendance_list.map(a => a.id);
+
 interface Props {
-  data: Paginated<Portefeuille>;
+  data: PaginatedResponse<EmployeAttendanceGroup>;
   page: number;
   pageSize: number;
   onPageChange: (p: number) => void;
@@ -23,29 +29,20 @@ const TableauEnAttente: React.FC<Props> = ({
   data, page, pageSize, onPageChange, onPageSizeChange, onConfirmerRH,
 }) => {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-  const [modal, setModal] = useState<Portefeuille | null>(null);
+  const [modal, setModal] = useState<EmployeAttendanceGroup | null>(null);
   const [confirming, setConfirming] = useState(false);
 
-  const rows = data?.results ?? [];
-  const total = data?.count ?? 0;
+  const rows = data?.data.results ?? [];
+  const total = data?.data.pagination.count ?? 0;
 
   const navigate = useNavigate();
 
-  // rows = vos données déjà chargées (la liste affichée dans le tableau)
-  // Adapter `r.portefeuille_id` et `r.employe.nom_complet` selon vos types réels.
-
-  const handleRowClick = (clickedRow: any, rows: any[]) => {
-    const queue: NavItem[] = rows.map(r => ({
-      id: r.id,       // ← l'id du portefeuille
-      nom: r.employe.nom_complet,   // ← le nom affiché dans la navbar
-    }));
-
-    const index = rows.findIndex(r => r.id === clickedRow.id);
-
-    navigate(`/paiement/${clickedRow.id}`, {
-      state: { queue, index },
-    });
+  const handleRowClick = (clicked: EmployeAttendanceGroup, all: EmployeAttendanceGroup[]) => {
+    const queue: NavItem[] = all.map(g => ({ id: g.employe.id, nom: g.employe.nom_complet }));
+    const index = all.findIndex(g => g.employe.id === clicked.employe.id);
+    navigate(`/paiement/${clicked.employe.id}`, { state: { queue, index } });
   };
+
   const columns = useMemo(() => [
     col.display({
       id: 'select',
@@ -63,38 +60,48 @@ const TableauEnAttente: React.FC<Props> = ({
       ),
       size: 40,
     }),
-    col.accessor(r => r.employe?.nom_complet, {
+    col.accessor(g => g.employe.nom_complet, {
       id: 'nom', header: 'Employé',
       cell: ({ row }) => (
         <button className="btn btn-link text-primary fw-medium p-0 text-start"
           onClick={() => setModal(row.original)}>
-          {row.original.employe?.nom_complet ?? '—'}
+          {row.original.employe.nom_complet}
         </button>
       ),
     }),
-    col.accessor(r => r.employe?.departement, {
+    col.accessor(g => g.employe.departement, {
       id: 'dept', header: 'Département',
       cell: ({ getValue }) => <span className="text-muted">{getValue() ?? '—'}</span>,
     }),
-    col.accessor(r => r.employe?.site_travail, {
+    col.accessor(g => g.employe.site_travail, {
       id: 'site', header: 'Site',
       cell: ({ getValue }) => <span className="text-muted">{getValue() ?? '—'}</span>,
     }),
-    col.accessor('nombre_jours_impayes', {
-      header: 'Jours',
-      cell: ({ getValue }) => (
-        <Badge   className="bg-white-subtle text-white">{getValue()} j</Badge>
-      ),
+    col.display({
+      id: 'jours', header: 'Jours',
+      cell: ({ row }) => <Badge className="bg-white-subtle text-white">{nbJours(row.original)} j</Badge>,
     }),
-    col.accessor(r => r.nombre_jours_impayes * r.montant_journalier, {
+    col.display({
       id: 'montant', header: 'Montant',
-      cell: ({ getValue }) => <span className="fw-medium">{fmt(getValue())}</span>,
+      cell: ({ row }) => <span className="fw-medium">{fmt(montantTotal(row.original))}</span>,
+    }),
+    col.display({
+      id: 'statut', header: 'Statut',
+      cell: ({ row }) => <span className="fw-medium"> {row.original.employe.statut}</span>,
+    }),
+    col.display({
+      id: 'mobile_phone', header: 'Tel',
+      cell: ({ row }) => <span className="fw-medium">{row.original.employe.mobile_phone??` - `}</span>,
+    }),
+    col.display({
+      id: 'operateur_mobile', header: 'Operateur',
+      cell: ({ row }) => <span className="fw-medium">{row.original.employe.operateur_mobile??` - `}</span>,
     }),
     col.display({
       id: 'confirmer', header: 'Confirmer',
       cell: ({ row }) => (
         <button className="btn btn-outline-success btn-sm d-flex align-items-center gap-1"
-          onClick={() => onConfirmerRH([row.original.id])}>
+          onClick={() => onConfirmerRH(attendanceIds(row.original))}>
           <i className="ri-check-line" /> Confirmer
         </button>
       ),
@@ -110,15 +117,15 @@ const TableauEnAttente: React.FC<Props> = ({
     }),
   ], [onConfirmerRH]);
 
-  const selectedIds = Object.keys(rowSelection).map(Number);
-  const selectedMontant = rows
-    .filter(p => selectedIds.includes(p.id))
-    .reduce((acc, p) => acc + p.nombre_jours_impayes * p.montant_journalier, 0);
+  const selectedEmployeIds = Object.keys(rowSelection).map(Number);
+  const selectedGroups = rows.filter(g => selectedEmployeIds.includes(g.employe.id));
+  const selectedMontant = selectedGroups.reduce((acc, g) => acc + montantTotal(g), 0);
+  const selectedAttendanceIds = selectedGroups.flatMap(attendanceIds);
 
   const handleGroupConfirm = async () => {
-    if (!selectedIds.length) return;
+    if (!selectedAttendanceIds.length) return;
     setConfirming(true);
-    await onConfirmerRH(selectedIds);
+    await onConfirmerRH(selectedAttendanceIds);
     setRowSelection({});
     setConfirming(false);
   };
@@ -127,7 +134,6 @@ const TableauEnAttente: React.FC<Props> = ({
     <React.Fragment>
       <Col xl={12}>
         <Card className="card-height-100">
-
           <CardHeader className="d-flex align-items-center flex-wrap gap-2 border-bottom">
             <div className="d-flex align-items-center gap-2 flex-grow-1">
               <div className="rounded-1" style={{ width: 4, height: 20, background: 'var(--vz-warning)' }} />
@@ -135,27 +141,19 @@ const TableauEnAttente: React.FC<Props> = ({
               <Badge>{total}</Badge>
             </div>
 
-            {/* Barre de sélection groupée */}
-            {selectedIds.length > 0 && (
-              <div
-                className="d-flex align-items-center gap-2 px-3 py-1 rounded-2 bg-primary-subtle border border-primary-subtle"
-                style={{ animation: 'secFadeIn .22s ease' }}
-              >
+            {selectedEmployeIds.length > 0 && (
+              <div className="d-flex align-items-center gap-2 px-3 py-1 rounded-2 bg-primary-subtle border border-primary-subtle">
                 <i className="ri-checkbox-multiple-line text-primary fs-16" />
                 <span className="text-primary fw-semibold fs-13">
-                  {selectedIds.length} sélectionné{selectedIds.length > 1 ? 's' : ''}
+                  {selectedEmployeIds.length} sélectionné{selectedEmployeIds.length > 1 ? 's' : ''}
                 </span>
                 <span className="text-muted">·</span>
                 <span className="text-muted fs-13">{fmt(selectedMontant)}</span>
-                <button
-                  className="btn btn-success btn-sm d-flex align-items-center gap-1 ms-1"
-                  onClick={handleGroupConfirm}
-                  disabled={confirming}
-                >
+                <button className="btn btn-success btn-sm d-flex align-items-center gap-1 ms-1"
+                  onClick={handleGroupConfirm} disabled={confirming}>
                   {confirming
                     ? <><span className="spinner-border spinner-border-sm" /> En cours…</>
-                    : <><i className="ri-check-double-line" /> Confirmer RH ({selectedIds.length})</>
-                  }
+                    : <><i className="ri-check-double-line" /> Confirmer RH ({selectedEmployeIds.length})</>}
                 </button>
               </div>
             )}
@@ -165,16 +163,13 @@ const TableauEnAttente: React.FC<Props> = ({
             <TableContainer
               columns={columns}
               data={rows}
-              // filtre & export
               isGlobalFilter
               isExport
               exportFilename="portefeuilles_en_attente"
               SearchPlaceholder="Rechercher un employé, département…"
-              // sélection
               rowSelection={rowSelection}
               onRowSelectionChange={setRowSelection}
-              getRowId={row => String(row.id)}
-              // pagination
+              getRowId={g => String(g.employe.id)}
               page={page}
               total={total}
               pageSize={pageSize}
@@ -182,18 +177,15 @@ const TableauEnAttente: React.FC<Props> = ({
               onPageSizeChange={onPageSizeChange}
             />
           </CardBody>
-
         </Card>
       </Col>
 
       <ModalDetailEmploye
-        portefeuille={modal}
+        group={modal}
         isOpen={!!modal}
         toggle={() => setModal(null)}
-        onConfirmerRH={id => onConfirmerRH([id])}
-        onViewPortefeuille={p => {
-          handleRowClick(p, rows);
-        }}
+        onConfirmerRH={ids => onConfirmerRH(ids)}
+        onViewPortefeuille={g => handleRowClick(g, rows)}
       />
     </React.Fragment>
   );

@@ -5,8 +5,9 @@ import { setAuthTokens, clearAuth, AuthUser, AuthTokens } from "./utilis";
 export const authService = {
   async login(email: string, password: string): Promise<AuthUser> {
     const res = await api.post('api/auth/login/', { email, password });
-    const { auth, ...user } = res.data.data; // adapte si ta structure diffère
+    const { auth, ...user } = res.data; // adapte si ta structure diffère
     setAuthTokens(auth);
+    console.log('auth',auth)
     return user as AuthUser;
   },
 
@@ -17,6 +18,6 @@ export const authService = {
 
   async refresh(refreshToken: string): Promise<Pick<AuthTokens, "accessToken" | "expirationTime">> {
     const res = await rawApi.post('api/auth/refresh/', { refreshToken });
-    return res.data.data; // adapte si la forme d'ApiResponse diffère
+    return res.data; // adapte si la forme d'ApiResponse diffère
   },
 };

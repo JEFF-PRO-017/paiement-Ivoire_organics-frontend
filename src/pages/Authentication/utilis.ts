@@ -56,11 +56,11 @@ export const setAuthTokens = (tokens: AuthTokens): void => {
   localStorage.setItem(AUTH_KEY, JSON.stringify(tokens));
 };
 
-export const getUser = <T,>(): T | null => {
+export const getUser = ():any|null => {
   const raw = localStorage.getItem(USER_KEY);
   if (!raw) return null;
   try {
-    return JSON.parse(raw) as T;
+    return JSON.parse(raw) ;
   } catch {
     return null;
   }

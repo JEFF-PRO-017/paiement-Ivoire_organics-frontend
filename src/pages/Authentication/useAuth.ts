@@ -20,7 +20,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
 
-  const [user, setUserState] = useState<AuthUser | null>(() => getUser<AuthUser>());
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,7 +31,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const u = await authService.login(email, password);
       setUser(u);
-      setUserState(u);
       navigate("/dashboard");
     } catch (e: any) {
       const message = e?.message ?? "Erreur de connexion";
@@ -51,13 +49,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.log(e);
     } finally {
       clearAuth();
-      setUserState(null);
       setLoading(false); // corrigé : était setLoading(true)
       if (reason) toast.info(reason);
       navigate("/login");
     }
   };
-  return React.createElement(AuthContext.Provider, { value: { user, loading, error, token, login, logout } }, children,);
+  return React.createElement(AuthContext.Provider, { value: { user: getUser(), loading, error, token, login, logout } }, children,);
 
 };
 
