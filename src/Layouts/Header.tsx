@@ -17,13 +17,12 @@ import { changeSidebarVisibility } from '../slices/thunks';
 import { useSelector, useDispatch } from "react-redux";
 import { createSelector } from 'reselect';
 import { useAuth } from 'pages/Authentication/useAuth';
+import ProfileDropdown from 'Components/Common/ProfileDropdown';
 
 const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }: any) => {
     const dispatch = useDispatch<any>();
-    // const {  siteActif } = useAuth();
-    // useEffect(()=>{
-    //     console.log('siteActifs',siteActif)
-    // },[siteActif])
+    const { user: u } = useAuth();
+
     const selectDashboardData = createSelector(
         (state) => state.Layout,
         (sidebarVisibilitytype) => sidebarVisibilitytype.sidebarVisibilitytype
@@ -145,12 +144,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }: any) => {
                             />
 
                             {/* ProfileDropdown */}
-                            {/* <ProfileDropdown /> */}
-
-                            <div className="d-flex align-items-center gap-2 p-2 bg-primary-subtle rounded">
-                                <i className="ri-map-pin-line text-primary" />
-                                {/* <span className="fw-semibold fs-13 text-primary">{siteActif}</span> */}
-                            </div>
+                            <ProfileDropdown />
 
                         </div>
                     </div>

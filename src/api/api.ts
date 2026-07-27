@@ -1,29 +1,31 @@
 import axios from 'axios';
 import { environment } from 'environments/environment';
+import { ensureFreshToken } from 'pages/Authentication/utilis';
 
 const BASE_URL = environment.API_URL;
 const REDIRECT_KEY = 'redirectAfterLogin';
 
-const injectHeaders = (config: any) => {
-  const token = localStorage.getItem('token');
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
-};
-
-// ── Instance principale ─────────────────────────────────────────────────
 export const api = axios.create({
   baseURL: BASE_URL,
   headers: { 'Content-Type': 'application/json' },
 });
 
+export const rawApi = axios.create({ baseURL: BASE_URL });
+
+
+const injectHeaders = async (config: any) => {
+  const token = await ensureFreshToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+};
+
+// remplace injectHeaders : async, vérifie et refresh si besoin avant d'attacher le token
 api.interceptors.request.use(injectHeaders);
 
 api.interceptors.response.use(
   (response) => {
-    // Le back renouvelle le token à chaque requête réussie
-    const newToken = response.headers['x-new-access-token'];
-    if (newToken) localStorage.setItem('token', newToken);
-    console.log('response',response)
     return response.data ?? response;
   },
   async (error) => {

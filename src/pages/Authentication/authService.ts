@@ -1,38 +1,22 @@
-import { api } from "api/api";
-
-
-export interface AuthUser {
-  id: number;
-  email: string;
-  first_name: string;
-  last_name: string;
-  role: string;
-  auth: {
-    sites: string[];
-    accessToken: string;
-    refreshToken: string;
-    expirationTime: string;
-  };
-  setting: {
-    id: number;
-    zoom: boolean;
-    mode: string;
-    site: string;
-    page_dashboard: Record<string, boolean>;
-    page_detail: Record<string, boolean>;
-    page_historique: Record<string, boolean>;
-  };
-}
+import { api, rawApi } from "api/api";
+import { setAuthTokens, clearAuth, AuthUser, AuthTokens } from "./utilis";
 
 
 export const authService = {
-
   async login(email: string, password: string): Promise<AuthUser> {
-    const login = await api.post('api/auth/login/', { email, password })
-    return login.data
+    const res = await api.post('api/auth/login/', { email, password });
+    const { auth, ...user } = res.data.data; // adapte si ta structure diffère
+    setAuthTokens(auth);
+    return user as AuthUser;
   },
 
   async logout(): Promise<void> {
-    return await api.post('api/auth/logout/')
+    await api.post('api/auth/logout/');
+    clearAuth();
+  },
+
+  async refresh(refreshToken: string): Promise<Pick<AuthTokens, "accessToken" | "expirationTime">> {
+    const res = await rawApi.post('api/auth/refresh/', { refreshToken });
+    return res.data.data; // adapte si la forme d'ApiResponse diffère
   },
 };
