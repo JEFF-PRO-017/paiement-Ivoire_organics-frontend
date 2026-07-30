@@ -2,13 +2,14 @@ import React, { useMemo, useState } from 'react';
 import { Card, CardBody, CardHeader, Col, Badge } from 'reactstrap';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useNavigate } from 'react-router-dom';
-import { PaginatedResponse, EmployeAttendanceGroup } from '../../Utils/types';
+import { PaginatedResponse, EmployeAttendanceGroup, StatutPortefeuille } from '../../Utils/types';
 import ModalDetailEmploye from '../Modal/ModalDetailEmploye';
-import TableContainer from 'pages/Components/TableContainer';
+import TableContainer from 'pages/Components/TableContainer'; // ← adaptez le chemin
 import { NavItem } from 'pages/Utils/Utils.model';
 
 const col = createColumnHelper<EmployeAttendanceGroup>();
 const fmt = (n: number) => n.toLocaleString('fr-FR') + ' F';
+
 const nbJours = (g: EmployeAttendanceGroup) => g.attendance_list.length;
 const montantTotal = (g: EmployeAttendanceGroup) =>
   g.attendance_list.reduce((acc, a) => acc + parseFloat(a.montant_journalier), 0);
@@ -19,15 +20,17 @@ interface Props {
   pageSize: number;
   onPageChange: (p: number) => void;
   onPageSizeChange: (size: number) => void;
+  onRefetch?: () => void; // rafraîchit ce tableau après création/archivage d'une présence depuis la modale
 }
 
-const TableauImpayes: React.FC<Props> = ({ data, page, pageSize, onPageChange, onPageSizeChange }) => {
+const TableauImpayes: React.FC<Props> = ({
+  data, page, pageSize, onPageChange, onPageSizeChange, onRefetch,
+}) => {
   const navigate = useNavigate();
   const [modal, setModal] = useState<EmployeAttendanceGroup | null>(null);
 
   const rows = data?.data.results ?? [];
   const total = data?.data.pagination.count ?? 0;
-
 
   const handleRowClick = (clicked: EmployeAttendanceGroup, all: EmployeAttendanceGroup[]) => {
     const queue: NavItem[] = all.map(g => ({ id: g.employe.id, nom: g.employe.nom_complet }));
@@ -84,7 +87,8 @@ const TableauImpayes: React.FC<Props> = ({ data, page, pageSize, onPageChange, o
     col.display({
       id: 'detail', header: 'Détail',
       cell: ({ row }) => (
-        <button className="btn btn-outline-danger btn-sm d-flex align-items-center gap-1" onClick={() => setModal(row.original)}>
+        <button className="btn btn-outline-danger btn-sm d-flex align-items-center gap-1" 
+          onClick={() => setModal(rows?.find(r=>r.employe.id===row.original.employe.id) ?? null)}>
           <i className="ri-eye-line" /> Voir
         </button>
       ),
@@ -109,7 +113,9 @@ const TableauImpayes: React.FC<Props> = ({ data, page, pageSize, onPageChange, o
           <CardBody>
             <TableContainer
               columns={columns}
-              data={rows}
+              data={rows.map(row =>
+                ({ employe: row.employe, attendance_list: row.attendance_list.filter(a => a.statut_paiement === StatutPortefeuille.IMPAYE) })
+              )}
               isGlobalFilter
               isExport
               exportFilename="portefeuilles_impayes"
@@ -128,7 +134,7 @@ const TableauImpayes: React.FC<Props> = ({ data, page, pageSize, onPageChange, o
         group={modal}
         isOpen={!!modal}
         toggle={() => setModal(null)}
-        onViewPortefeuille={g => handleRowClick(g, rows)}
+        onRefetch={onRefetch}
       />
     </React.Fragment>
   );

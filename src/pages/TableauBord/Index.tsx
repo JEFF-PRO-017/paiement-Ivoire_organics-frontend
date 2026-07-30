@@ -7,6 +7,7 @@ import TableauEnAttente from './Conposants/TableauEnAttente';
 import TableauImpayes from './Conposants/TableauImpayes';
 import SectionWrapper from './Conposants/SectionWrapper';
 import { useDashboard, SectionKey } from './Hook/useDashboard';
+// import { ToastContainer } from 'react-toastify/dist/components/ToastContainer';
 
 // ─── Styles injectés une seule fois dans le <head> ───────────────────────────
 const STYLES = `
@@ -25,6 +26,17 @@ const STYLES = `
     color: #fff !important;
     border-radius: 50% !important;
   }
+
+  .flatpickr-day.jour-en-traitement,
+  .flatpickr-day.jour-en-traitement:hover {
+    background: #6f42c1 !important;
+    border-color: #6f42c1 !important;
+    color: #fff !important;
+    border-radius: 50% !important;
+  }
+
+  .bg-purple-subtle { background-color: #ede7f6 !important; }
+  .text-purple { color: #6f42c1 !important; }
 `;
 
 const injectStyles = () => {
@@ -72,6 +84,7 @@ const DashboardPaiement: React.FC = () => {
     handlePageEA,  handlePageSizeEA,
     handlePageIMP, handlePageSizeIMP,
     handleConfirmerRH,
+    refetchEA, refetchIMP, // ⚠️ à exposer depuis useDashboard : enAttente.refetch / impayes.refetch
   } = useDashboard();
 
   const [ws1_s3, setWs1_s3] = useState(8);
@@ -147,6 +160,7 @@ const DashboardPaiement: React.FC = () => {
                       onPageChange={handlePageEA}
                       onPageSizeChange={handlePageSizeEA}
                       onConfirmerRH={handleConfirmerRH}
+                      onRefetch={refetchEA}
                     />
                   </Row>
                 )}
@@ -181,6 +195,7 @@ const DashboardPaiement: React.FC = () => {
                   pageSize={pageSizeIMP}
                   onPageChange={handlePageIMP}
                   onPageSizeChange={handlePageSizeIMP}
+                  onRefetch={refetchIMP}
                 />
               )}
             </SectionWrapper>

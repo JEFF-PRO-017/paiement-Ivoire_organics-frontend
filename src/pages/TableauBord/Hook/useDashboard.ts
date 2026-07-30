@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
-import { DashboardStats, HistoriquePaiement, EmployeAttendanceGroup,
-   PaginatedResponse, PageComponents, StatutPaiement } from '../../Utils/types';
+import { DashboardStats, HistoriquePaiement, EmployeAttendanceGroup, PaginatedResponse, PageComponents, StatutPaiement } from '../../Utils/types';
 import { paiementService } from '../Services/Service';
 import { settingsService } from '../Services/SettingsService';
 import { getUser, setUser } from 'pages/Authentication/utilis';
@@ -42,6 +41,7 @@ const usePaginatedAttendances = (
   }, [fetchData]);
 
   const refetch = useCallback(() => fetchData(page, pageSize), [fetchData, page, pageSize]);
+  console.log('data',data)
 
   return { data, page, pageSize, handlePage, handlePageSize, refetch };
 };
@@ -74,11 +74,15 @@ export const useDashboard = () => {
     [],
   );
 
-  // Effet séparé : persiste `visible` en back, avec debounce anti-clics rapides
-  const isFirstRender = useRef(true);
+  // Effet séparé : persiste `visible` en back, avec debounce anti-clics rapides.
+  // isUserAction distingue un clic utilisateur (show()/hide()/toggle() appelés depuis l'UI)
+  // d'un changement programmatique (show() déclenché automatiquement au premier chargement des données),
+  // pour éviter d'envoyer un PATCH inutile au montage.
+  const isUserAction = useRef(false);
 
   useEffect(() => {
-    if (isFirstRender.current) { isFirstRender.current = false; return; } // pas de patch au montage
+    if (!isUserAction.current) return;
+    isUserAction.current = false;
 
     const timeout = setTimeout(() => {
       const patch = {
@@ -97,10 +101,17 @@ export const useDashboard = () => {
     return () => clearTimeout(timeout); // annule le patch précédent si un nouveau toggle arrive avant
   }, [visible]);
 
-
   const show = useCallback((key: SectionKey) => setVisibility(key, true), [setVisibility]);
-  const hide = useCallback((key: SectionKey) => setVisibility(key, false), [setVisibility]);
-  const toggle = useCallback((key: SectionKey) => setVisibility(key, v => !v), [setVisibility]);
+
+  const hide = useCallback((key: SectionKey) => {
+    isUserAction.current = true;
+    setVisibility(key, false);
+  }, [setVisibility]);
+
+  const toggle = useCallback((key: SectionKey) => {
+    isUserAction.current = true;
+    setVisibility(key, v => !v);
+  }, [setVisibility]);
 
   // Section "portefeuilles en attente" — ne force "show" que si l'utilisateur n'a pas déjà masqué la section
   const enAttente = usePaginatedAttendances('EN_ATTENTE', () => visible.s3 === null && show('s3'), 'Impossible de charger les portefeuilles EN_ATTENTE');
@@ -124,9 +135,7 @@ export const useDashboard = () => {
     impayes.refetch();
     paiementService.getStats()
       .then(d => { setStats(d.data); visible.s1 === null && show('s1'); })
-      .catch(() => toast.error('Impossible de charger les statistiques'));
-  }, [enAttente, impayes]);
-
+      .catch(() => toast.error('Impossible de charger les statistiques'));  }, [enAttente.refetch, impayes.refetch]);
   const allHidden = Object.values(visible).every(v => v === false);
 
   return {
@@ -139,5 +148,8 @@ export const useDashboard = () => {
     handlePageEA: enAttente.handlePage, handlePageSizeEA: enAttente.handlePageSize,
     handlePageIMP: impayes.handlePage, handlePageSizeIMP: impayes.handlePageSize,
     handleConfirmerRH,
+    // exposés pour rafraîchir les tableaux depuis ModalDetailEmploye après création/archivage d'une présence
+    refetchEA: enAttente.refetch,
+    refetchIMP: impayes.refetch,
   };
 };

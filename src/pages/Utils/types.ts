@@ -3,7 +3,11 @@ export enum StatutPortefeuille {
   IMPAYE = 'IMPAYE',
   CONFIRME_RH = 'CONFIRME_RH',
   EN_ATTENTE = 'EN_ATTENTE',
+  ARCHIVE = 'ARCHIVE',
+  EN_COURS_TRAITEMENT_CREATION = 'EN_COURS_TRAITEMENT_CREATION',
+  EN_COURS_TRAITEMENT_SUPPRESION= 'EN_COURS_TRAITEMENT_SUPPRESION'
 }
+export type STATUT_CHOICES_ATTENDANCE = 'PAYE' | 'IMPAYE' | 'CONFIRME_RH' | 'EN_ATTENTE'|'ARCHIVE'|'EN_COURS_TRAITEMENT_CREATION'|'EN_COURS_TRAITEMENT_SUPPRESION'
 
 export enum StatutEmploye {
   ACTIF = 'ACTIF',
@@ -81,7 +85,7 @@ export interface Employe {
   notchpay_beneficiary_id: string | null;
 }
 
- export interface AttendanceItem {
+export interface AttendanceItem {
   id: number;
   action: string;
   date_work: string; // ISO datetime
@@ -109,7 +113,7 @@ interface Pagination {
   previous: string | null;
 }
 
-export interface  Response<T> {
+export interface Response<T> {
   success: boolean;
   message: string;
   data: T,
@@ -121,12 +125,18 @@ export interface PaginatedResponse<T> {
   data: {
     results: T[];
     pagination: Pagination
+    stats?: StatsHistorique
   };
   errors: null | Record<string, unknown>;
 }
 export type StatutPaiement = 'EN_ATTENTE' | 'IMPAYE' | 'EN_COURS';
 
-
+export interface StatsHistorique {
+  total: number;
+  count: number;
+  moyenne: number;
+  employes: number;
+}
 // types.ts — ajoute
 export interface PageComponents {
   composant_1: boolean;
@@ -144,3 +154,34 @@ export interface UserSettings {
   page_detail: PageComponents;
   page_historique: PageComponents;
 }
+
+// .................
+export interface SignalementResponse {
+  id: number;
+  type_demande: string;
+  jour: string;
+  attendance_id: number | null;
+  statut_paiement: string | null;
+}
+
+
+export interface CreerPresencePayload {
+  employe_id: number;
+  action: 'sign_in' | 'sign_out';
+  date_work: string; // ISO datetime
+  worked_hours?: number;
+}
+
+export interface CreerPresenceResponse {
+  id: number;
+  action: string;
+  statut_attendance: string;
+}
+
+export interface SignalementPayload {
+  employe_id: number;
+  type_demande: 'CREATION' | 'SUPPRESSION';
+  jour: string; // YYYY-MM-DD
+  raison: string;
+}
+

@@ -1,35 +1,36 @@
 import { useEffect, useState, useCallback } from 'react';
-import { toast }                            from 'react-toastify';
-import { SortingState, OnChangeFn }         from '@tanstack/react-table';
+import { toast } from 'react-toastify';
+import { SortingState, OnChangeFn } from '@tanstack/react-table';
 
-import { chipToDateRange }                              from './historique.constants';
-import { historiqueService, LignePaiement, PagedResponse }             from '../Services/Service';
+import { chipToDateRange } from './historique.constants';
+import { historiqueService, LignePaiement } from '../Services/Service';
 import { StatsHistorique, FiltresState } from './historique.types';
+import { PaginatedResponse } from 'pages/Utils/types';
 
 export interface UseHistoriquePaiementsReturn {
-  rows:            LignePaiement[];
-  stats:           StatsHistorique;
-  isLoading:       boolean;
+  rows: LignePaiement[];
+  stats: StatsHistorique;
+  isLoading: boolean;
 
-  sorting:         SortingState;
+  sorting: SortingState;
   onSortingChange: OnChangeFn<SortingState>;
 
-  filtres:         FiltresState;
-  setSearch:       (v: string) => void;
-  setDept:         (v: string) => void;
-  setDateRange:    (v: Date[]) => void;
-  handleChip:      (c: string) => void;
-  handleReset:     () => void;
+  filtres: FiltresState;
+  setSearch: (v: string) => void;
+  setDept: (v: string) => void;
+  setDateRange: (v: Date[]) => void;
+  handleChip: (c: string) => void;
+  handleReset: () => void;
 
-  page:            number;
-  pageSize:        number;
-  totalPages:      number;
-  totalCount:      number;
-  setPage:         (p: number) => void;
-  setPageSize:     (s: number) => void;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+  totalCount: number;
+  setPage: (p: number) => void;
+  setPageSize: (s: number) => void;
 
-  handleExportCSV:      () => Promise<void>;
-  handleExportPDF:      () => Promise<void>;
+  handleExportCSV: () => Promise<void>;
+  handleExportPDF: () => Promise<void>;
   handleExportPDFLigne: (id: number) => Promise<void>;
 }
 
@@ -38,39 +39,39 @@ const EMPTY_STATS: StatsHistorique = { total: 0, count: 0, moyenne: 0, employes:
 export const useHistoriquePaiements = (): UseHistoriquePaiementsReturn => {
 
   // ── State UI ───────────────────────────────────────────────────────────────
-  const [rows,       setRows]       = useState<LignePaiement[]>([]);
-  const [stats,      setStats]      = useState<StatsHistorique>(EMPTY_STATS);
-  const [isLoading,  setIsLoading]  = useState(true);
-  const [sorting,    setSorting]    = useState<SortingState>([]);
+  const [rows, setRows] = useState<LignePaiement[]>([]);
+  const [stats, setStats] = useState<StatsHistorique>(EMPTY_STATS);
+  const [isLoading, setIsLoading] = useState(true);
+  const [sorting, setSorting] = useState<SortingState>([]);
 
   // ── Filtres ────────────────────────────────────────────────────────────────
-  const [search,     setSearchRaw]    = useState('');
-  const [dept,       setDeptRaw]      = useState('Tous');
-  const [dateRange,  setDateRangeRaw] = useState<Date[]>([]);
-  const [activeChip, setActiveChip]   = useState('');
+  const [search, setSearchRaw] = useState('');
+  const [dept, setDeptRaw] = useState('Tous');
+  const [dateRange, setDateRangeRaw] = useState<Date[]>([]);
+  const [activeChip, setActiveChip] = useState('');
 
   // ── Pagination ─────────────────────────────────────────────────────────────
-  const [page,       setPage]       = useState(1);
-  const [pageSize,   setPageSizeRaw] = useState(10);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSizeRaw] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
 
   // ── Fetch (se déclenche à chaque changement de filtre ou de page) ──────────
   const fetchData = useCallback(async (
-    filtres:  Partial<FiltresState>,
-    p:        number,
-    ps:       number,
+    filtres: Partial<FiltresState>,
+    p: number,
+    ps: number,
     cancelled: { current: boolean },
   ) => {
     setIsLoading(true);
     try {
-      const res: PagedResponse = await historiqueService.fetchPage(filtres, p, ps);
-     console.log('Données reçues du service', res);
+      const res: PaginatedResponse<LignePaiement> = await historiqueService.fetchPage(filtres, p, ps);
+      const data = res.data
       if (cancelled.current) return;
-      setRows(res.results);
-      setStats(res.stats);
-      setTotalPages(res.total_pages);
-      setTotalCount(res.total_count);
+      setRows(data.results);
+      data.stats && setStats(data.stats);
+      setTotalPages(data.pagination.total_pages);
+      setTotalCount(data.pagination.count);
     } catch {
       if (!cancelled.current) toast.error("Impossible de charger l'historique");
     } finally {
@@ -85,10 +86,10 @@ export const useHistoriquePaiements = (): UseHistoriquePaiementsReturn => {
   }, [search, dept, dateRange, page, pageSize]); // ← chaque changement relance le fetch
 
   // ── Setters (reset page à 1 sur changement de filtre) ─────────────────────
-  const setSearch    = (v: string) => { setSearchRaw(v);    setPage(1); };
-  const setDept      = (v: string) => { setDeptRaw(v);      setPage(1); };
+  const setSearch = (v: string) => { setSearchRaw(v); setPage(1); };
+  const setDept = (v: string) => { setDeptRaw(v); setPage(1); };
   const setDateRange = (v: Date[]) => { setDateRangeRaw(v); setActiveChip('Personnalisé'); setPage(1); };
-  const setPageSize  = (s: number) => { setPageSizeRaw(s);  setPage(1); };
+  const setPageSize = (s: number) => { setPageSizeRaw(s); setPage(1); };
 
   const handleChip = (chip: string) => {
     const [from, now] = chipToDateRange(chip);

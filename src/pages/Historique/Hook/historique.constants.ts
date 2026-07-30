@@ -13,10 +13,13 @@ export const CHIPS = ["Aujourd'hui", '7 derniers jours', '30 jours', 'Ce mois', 
 export const PAGE_LIMIT = 5;
 
 export const STATUT_CLR: Record<StatutPortefeuille, string> = {
-  [StatutPortefeuille.PAYE]:        'success',
+  [StatutPortefeuille.PAYE]: 'success',
   [StatutPortefeuille.CONFIRME_RH]: 'primary',
-  [StatutPortefeuille.EN_ATTENTE]:  'warning',
-  [StatutPortefeuille.IMPAYE]:      'danger',
+  [StatutPortefeuille.EN_ATTENTE]: 'warning',
+  [StatutPortefeuille.IMPAYE]: 'danger',
+  [StatutPortefeuille.ARCHIVE]: 'secondary',
+  [StatutPortefeuille.EN_COURS_TRAITEMENT_CREATION]: 'secondary',
+  [StatutPortefeuille.EN_COURS_TRAITEMENT_SUPPRESION]: 'secondary',
 };
 
 // ── Formatters ────────────────────────────────────────────────────────────────
@@ -25,13 +28,13 @@ export const STATUT_CLR: Record<StatutPortefeuille, string> = {
 
 /** Calcule la plage [from, now] selon le chip sélectionné. */
 export const chipToDateRange = (chip: string): [Date, Date] => {
-  const now  = new Date();
+  const now = new Date();
   const from = new Date();
-  if      (chip === "Aujourd'hui")      from.setHours(0, 0, 0, 0);
+  if (chip === "Aujourd'hui") from.setHours(0, 0, 0, 0);
   else if (chip === '7 derniers jours') from.setDate(now.getDate() - 7);
-  else if (chip === '30 jours')         from.setDate(now.getDate() - 30);
-  else if (chip === 'Ce mois')          from.setDate(1);
-  else if (chip === 'Trimestre')        from.setMonth(now.getMonth() - 3);
-  else if (chip === 'Cette année')      from.setMonth(0, 1);
+  else if (chip === '30 jours') from.setDate(now.getDate() - 30);
+  else if (chip === 'Ce mois') from.setDate(1);
+  else if (chip === 'Trimestre') from.setMonth(now.getMonth() - 3);
+  else if (chip === 'Cette année') from.setMonth(0, 1);
   return [from, now];
 };

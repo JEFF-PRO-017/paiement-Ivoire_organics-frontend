@@ -1,9 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import { Card, CardBody, CardHeader, Col, Badge } from 'reactstrap';
 import { createColumnHelper, RowSelectionState } from '@tanstack/react-table';
-import { PaginatedResponse, EmployeAttendanceGroup } from '../../Utils/types';
+import { PaginatedResponse, EmployeAttendanceGroup, StatutPortefeuille } from '../../Utils/types';
 import ModalDetailEmploye from '../Modal/ModalDetailEmploye';
-import TableContainer from 'pages/Components/TableContainer';
+import TableContainer from 'pages/Components/TableContainer'; // ← adaptez le chemin
 import { useNavigate } from 'react-router';
 import { NavItem } from 'pages/Utils/Utils.model';
 
@@ -23,10 +23,11 @@ interface Props {
   onPageChange: (p: number) => void;
   onPageSizeChange: (size: number) => void;
   onConfirmerRH: (ids: number[]) => Promise<void>;
+  onRefetch?: () => void; // rafraîchit ce tableau après création/archivage d'une présence depuis la modale
 }
 
 const TableauEnAttente: React.FC<Props> = ({
-  data, page, pageSize, onPageChange, onPageSizeChange, onConfirmerRH,
+  data, page, pageSize, onPageChange, onPageSizeChange, onConfirmerRH, onRefetch,
 }) => {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [modal, setModal] = useState<EmployeAttendanceGroup | null>(null);
@@ -34,7 +35,6 @@ const TableauEnAttente: React.FC<Props> = ({
 
   const rows = data?.data.results ?? [];
   const total = data?.data.pagination.count ?? 0;
-
   const navigate = useNavigate();
 
   const handleRowClick = (clicked: EmployeAttendanceGroup, all: EmployeAttendanceGroup[]) => {
@@ -91,11 +91,11 @@ const TableauEnAttente: React.FC<Props> = ({
     }),
     col.display({
       id: 'mobile_phone', header: 'Tel',
-      cell: ({ row }) => <span className="fw-medium">{row.original.employe.mobile_phone??` - `}</span>,
+      cell: ({ row }) => <span className="fw-medium">{row.original.employe.mobile_phone ?? ` - `}</span>,
     }),
     col.display({
       id: 'operateur_mobile', header: 'Operateur',
-      cell: ({ row }) => <span className="fw-medium">{row.original.employe.operateur_mobile??` - `}</span>,
+      cell: ({ row }) => <span className="fw-medium">{row.original.employe.operateur_mobile ?? ` - `}</span>,
     }),
     col.display({
       id: 'confirmer', header: 'Confirmer',
@@ -110,7 +110,7 @@ const TableauEnAttente: React.FC<Props> = ({
       id: 'detail', header: 'Détail',
       cell: ({ row }) => (
         <button className="btn btn-outline-warning btn-sm d-flex align-items-center gap-1"
-          onClick={() => setModal(row.original)}>
+          onClick={() => setModal(rows?.find(r=>r.employe.id===row.original.employe.id) ?? null)}>
           <i className="ri-eye-line" /> Voir
         </button>
       ),
@@ -162,7 +162,9 @@ const TableauEnAttente: React.FC<Props> = ({
           <CardBody>
             <TableContainer
               columns={columns}
-              data={rows}
+              data={rows.map(row =>
+                ({ employe: row.employe, attendance_list: row.attendance_list.filter(a => a.statut_paiement === StatutPortefeuille.EN_ATTENTE) })
+              )}
               isGlobalFilter
               isExport
               exportFilename="portefeuilles_en_attente"
@@ -186,6 +188,7 @@ const TableauEnAttente: React.FC<Props> = ({
         toggle={() => setModal(null)}
         onConfirmerRH={ids => onConfirmerRH(ids)}
         onViewPortefeuille={g => handleRowClick(g, rows)}
+        onRefetch={onRefetch}
       />
     </React.Fragment>
   );
