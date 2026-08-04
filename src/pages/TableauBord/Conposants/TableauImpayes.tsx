@@ -130,10 +130,11 @@ const TableauImpayes: React.FC<Props> = ({
         </Card>
       </Col>
 
-      <ModalDetailEmploye
+        <ModalDetailEmploye
         group={modal}
         isOpen={!!modal}
         toggle={() => setModal(null)}
+        onViewPortefeuille={g => handleRowClick(g, rows)}
         onRefetch={onRefetch}
       />
     </React.Fragment>

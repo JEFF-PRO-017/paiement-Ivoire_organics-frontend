@@ -313,7 +313,7 @@ const ModalDetailEmploye: React.FC<Props> = ({
                 <h6 className="text-uppercase fw-semibold text-muted fs-11 mb-2">
                   Détail des pointages ({attendances.length})
                 </h6>
-                <div style={{ maxHeight: 420, overflowY: 'auto' }}>
+                <div>
                   <TableContainer
                     columns={columns}
                     data={attendances}
@@ -326,6 +326,7 @@ const ModalDetailEmploye: React.FC<Props> = ({
                     pageSize={Math.max(attendances.length, 1)}
                     onPageChange={() => { }}
                     onPageSizeChange={() => { }}
+                    viewPagniation={false}
                   />
                 </div>
               </Col>

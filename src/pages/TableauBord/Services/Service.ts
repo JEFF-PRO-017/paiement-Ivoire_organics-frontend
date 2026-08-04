@@ -40,4 +40,13 @@ export const paiementService = {
       params: { statut_paiement, page, page_size: pageSize },
     });
   },
+  /**
+    * GET /api/paiements/employes/<employeId>/attendances/
+    * ⚠️ Endpoint à créer côté back s'il n'existe pas déjà : retourne l'ensemble
+    * des attendances d'un employé (toutes statuts confondus), utilisé par la
+    * page de détail (useDetailEmploye) pour afficher calendrier + actions groupées.
+    */
+  getEmployeAttendanceGroup: (employeId: number): Promise<EmployeAttendanceGroup> =>
+    api.get(`/api/paiements/employes/?employe_id=${employeId}`).then(r => r.data),
+
 };

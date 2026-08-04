@@ -104,6 +104,7 @@ export interface TableContainerProps {
   handleCompanyClick?: any;
   handleContactClick?: any;
   handleTicketClick?:  any;
+  viewPagniation?: boolean;
 }
 
 // ─── TableContainer ───────────────────────────────────────────────────────────
@@ -129,6 +130,7 @@ const TableContainer: React.FC<TableContainerProps> = ({
   thClass    = '',
   divClass   = 'table-responsive table-card ',
   isBordered,
+  viewPagniation = true
 }) => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter,  setGlobalFilter ] = useState('');
@@ -328,7 +330,7 @@ const TableContainer: React.FC<TableContainerProps> = ({
       </div>
 
       {/* ── Pagination ── */}
-      {data.length > 0 && (
+      {data.length > 0 && viewPagniation &&(
         <Pagination
           page={page}
           total={total}
