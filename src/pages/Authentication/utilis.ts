@@ -2,6 +2,7 @@ import { authService } from "./authService";
 
 // auth.ts
 export interface AuthTokens {
+  sites: string[];
   accessToken: string;
   refreshToken: string;
   expirationTime: string;

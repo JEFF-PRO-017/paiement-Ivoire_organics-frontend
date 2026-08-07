@@ -19,6 +19,12 @@ const Navdata = () => {
       icon:  <FeatherIcon icon="clock" className="icon-dual" />,
       link:  '/paiement/historique',
     },
+    {
+      id:    'settings-admin',
+      label: 'Paramètres administrateur',
+      icon:  <FeatherIcon icon="settings" className="icon-dual" />,
+      link:  '/settings/admin',
+    }
   ];
 
   return <React.Fragment>{menuItems}</React.Fragment>;

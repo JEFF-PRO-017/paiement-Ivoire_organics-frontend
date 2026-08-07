@@ -145,7 +145,7 @@ export const useDetailEmploye = (): UseDetailEmployeReturn => {
         toast.success(`${enAttenteIds.length} présence(s) confirmée(s) RH`);
       } else {
         // ⚠️ à créer côté service si absent : PATCH bulk statut_paiement -> 'PAYE'
-        await attendanceService.mettreAJourStatutPaiement(impayeIds, 'PAYE');
+        await attendanceService.payementManuel();
         toast.success(`${impayeIds.length} présence(s) marquée(s) payée(s)`);
       }
       const refreshed = await fetchGroup(employeId);

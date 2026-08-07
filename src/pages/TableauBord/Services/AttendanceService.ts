@@ -24,6 +24,11 @@ export const attendanceService = {
    */
   mettreAJourStatutPaiement: (ids: number[], statut_paiement:STATUT_CHOICES_ATTENDANCE ) =>
     api.patch('/api/paiements/attendances/', { ids, statut_paiement }).then(r => r.data),
+
+  
+  payementManuel: (): Promise<any> =>
+    api.post('/api/notch-pay/paiement-manuel/', {'employe_ids': [2]}).then(r => r.data),
+
 };
 
 // ─── Service Signalement ────────────────────────────────────────────────────
