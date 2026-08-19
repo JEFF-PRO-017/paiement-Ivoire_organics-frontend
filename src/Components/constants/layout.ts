@@ -1,67 +1,76 @@
 enum LAYOUT_TYPES {
-  HORIZONTAL= "horizontal",
-  VERTICAL= "vertical",
-  TWOCOLUMN= "twocolumn",
-  SEMIBOX="semibox"
+  HORIZONTAL = "horizontal",
+  VERTICAL = "vertical",
+  TWOCOLUMN = "twocolumn",
+  SEMIBOX = "semibox"
 };
 
 enum LAYOUT_MODE_TYPES {
-  LIGHTMODE= "light",
-  DARKMODE= "dark",
-};
+  LIGHTMODE = "light",
+  DARKMODE = "dark",
+}
+
+// Vocabulaire du backend, séparé du vocabulaire interne du layout
+export type ApiThemeMode = 'CLAIR' | 'SOMBRE';
+
+export const apiModeToLayout = (mode: ApiThemeMode): LAYOUT_MODE_TYPES =>
+  mode === 'CLAIR' ? LAYOUT_MODE_TYPES.LIGHTMODE : LAYOUT_MODE_TYPES.DARKMODE;
+
+export const layoutToApiMode = (layout: LAYOUT_MODE_TYPES): ApiThemeMode =>
+  layout === LAYOUT_MODE_TYPES.LIGHTMODE ? 'CLAIR' : 'SOMBRE';
 
 enum LAYOUT_SIDEBAR_TYPES {
-  LIGHT= "light",
-  DARK= "dark",
-  GRADIENT= "gradient",
-  GRADIENT_2= "gradient-2",
-  GRADIENT_3= "gradient-3",
-  GRADIENT_4= "gradient-4",
+  LIGHT = "light",
+  DARK = "dark",
+  GRADIENT = "gradient",
+  GRADIENT_2 = "gradient-2",
+  GRADIENT_3 = "gradient-3",
+  GRADIENT_4 = "gradient-4",
 };
 
 enum LAYOUT_WIDTH_TYPES {
-  FLUID= "lg",
-  BOXED= "boxed",
+  FLUID = "lg",
+  BOXED = "boxed",
 };
 
 enum LAYOUT_POSITION_TYPES {
-  FIXED= "fixed",
-  SCROLLABLE= "scrollable",
+  FIXED = "fixed",
+  SCROLLABLE = "scrollable",
 };
 
 enum LAYOUT_TOPBAR_THEME_TYPES {
-  LIGHT= "light",
-  DARK= "dark",
+  LIGHT = "light",
+  DARK = "dark",
 };
 
 enum LEFT_SIDEBAR_SIZE_TYPES {
-  DEFAULT= "lg",
-  COMPACT= "md",
-  SMALLICON= "sm",
-  SMALLHOVER= "sm-hover"
+  DEFAULT = "lg",
+  COMPACT = "md",
+  SMALLICON = "sm",
+  SMALLHOVER = "sm-hover"
 };
 
 enum LEFT_SIDEBAR_VIEW_TYPES {
-  DEFAULT= "default",
+  DEFAULT = "default",
   DETACHED = "detached"
 };
 
 enum LEFT_SIDEBAR_IMAGE_TYPES {
-  NONE= "none",
-  IMG1= "img-1",
-  IMG2= "img-2",
-  IMG3= "img-3",
-  IMG4= "img-4",  
+  NONE = "none",
+  IMG1 = "img-1",
+  IMG2 = "img-2",
+  IMG3 = "img-3",
+  IMG4 = "img-4",
 };
 
 enum PERLOADER_TYPES {
-  ENABLE= "enable",
-  DISABLE= "disable"
+  ENABLE = "enable",
+  DISABLE = "disable"
 }
 
 enum SIDEBAR_VISIBILITY_TYPES {
-  SHOW= "show",
-  HIDDEN= "hidden"
+  SHOW = "show",
+  HIDDEN = "hidden"
 }
 
 export {

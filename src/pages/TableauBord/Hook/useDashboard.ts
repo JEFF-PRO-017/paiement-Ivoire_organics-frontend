@@ -63,6 +63,8 @@ export const useDashboard = () => {
     };
   });
 
+  
+
   // Met à jour la visibilité localement, puis persiste en silence côté back
   const setVisibility = useCallback(
     (key: SectionKey, value: boolean | ((prev: boolean | null) => boolean)) => {

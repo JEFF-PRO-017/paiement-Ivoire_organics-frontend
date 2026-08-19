@@ -7,6 +7,7 @@ import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import rootReducer from "./slices";
 import { AuthProvider } from 'pages/Authentication/useAuth';
+import { LoadingProvider } from 'pages/Components/Loadingcontext';
 
 const store = configureStore({ reducer: rootReducer, devTools: true });
 
@@ -17,9 +18,11 @@ root.render(
   <Provider store={store}>
     <React.Fragment>
       <BrowserRouter basename={process.env.PUBLIC_URL}>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
+        <LoadingProvider>
+          <AuthProvider>
+            <App />
+          </AuthProvider>
+        </LoadingProvider>
       </BrowserRouter>
     </React.Fragment>
   </Provider>

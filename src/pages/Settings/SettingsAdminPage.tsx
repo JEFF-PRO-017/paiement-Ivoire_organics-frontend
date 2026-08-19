@@ -1,5 +1,4 @@
 // SettingsAdminPage.tsx
-import { Navigate } from 'react-router-dom';
 import { Container, Button } from 'reactstrap';
 import { useSettingsAdmin } from './Hooks/useSettingsAdmin';
 import { SoldeSection } from './Components/SoldeSection';
@@ -10,7 +9,7 @@ import { useAuth } from 'pages/Authentication/useAuth';
 import React from 'react';
 
 export const SettingsAdminPage = () => {
-  const { user, logout } = useAuth();
+  const {logout } = useAuth();
 
   const {
     showSolde, solde, loadingSolde, toggleSolde,
@@ -18,10 +17,6 @@ export const SettingsAdminPage = () => {
     sites, activeSite, changingSite, changeSite,
     odooLoading, loadEmployees, loadAttendances,
   } = useSettingsAdmin();
-
-  if (!user || user.role !== 'admin') {
-    return <Navigate to="/dashboard" replace />;
-  }
 
   return (
     <React.Fragment>

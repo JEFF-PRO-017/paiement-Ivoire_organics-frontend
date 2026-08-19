@@ -100,18 +100,33 @@ const TableauEnAttente: React.FC<Props> = ({
     col.display({
       id: 'confirmer', header: 'Confirmer',
       cell: ({ row }) => (
-        <button className="btn btn-outline-success btn-sm d-flex align-items-center gap-1"
+        <button
+          className="btn btn-outline-success btn-sm d-flex align-items-center justify-content-center"
+          title="Valider la présence du jour"
           onClick={() => onConfirmerRH(attendanceIds(row.original))}>
-          <i className="ri-check-line" /> Confirmer
+          <i className="ri-check-line" />
         </button>
       ),
     }),
     col.display({
-      id: 'detail', header: 'Détail',
+      id: 'detail-modal', header: 'Détail',
       cell: ({ row }) => (
-        <button className="btn btn-outline-warning btn-sm d-flex align-items-center gap-1"
-          onClick={() => setModal(rows?.find(r=>r.employe.id===row.original.employe.id) ?? null)}>
-          <i className="ri-eye-line" /> Voir
+        <button
+          className="btn btn-outline-warning btn-sm d-flex align-items-center justify-content-center"
+          title="Demander la création ou la suppression d'une présence"
+          onClick={() => setModal(rows?.find(r => r.employe.id === row.original.employe.id) ?? null)}>
+          <i className="ri-file-list-3-line" />
+        </button>
+      ),
+    }),
+    col.display({
+      id: 'detail-employe', header: 'Détail',
+      cell: ({ row }) => (
+        <button
+          className="btn btn-outline-warning btn-sm d-flex align-items-center justify-content-center"
+          title="Voir la fiche détaillée de l'employé"
+          onClick={() => handleRowClick(row.original, rows)}>
+          <i className="ri-user-line" />
         </button>
       ),
     }),
@@ -139,6 +154,11 @@ const TableauEnAttente: React.FC<Props> = ({
               <div className="rounded-1" style={{ width: 4, height: 20, background: 'var(--vz-warning)' }} />
               <h4 className="card-title mb-0">Portefeuilles en attente</h4>
               <Badge>{total}</Badge>
+              <i
+                className="ri-question-line text-muted fs-16"
+                style={{ cursor: 'help' }}
+                title="Ce tableau recense toutes les présences des employés qui n'ont pas encore été approuvées par la RH. Vous pouvez y valider une présence, demander la création ou la suppression d'une présence, ou consulter le détail d'un employé."
+              />
             </div>
 
             {selectedEmployeIds.length > 0 && (
