@@ -7,15 +7,17 @@ import { SiteSection } from './Components/SiteSection';
 import { OdooSection } from './Components/OdooSection';
 import { useAuth } from 'pages/Authentication/useAuth';
 import React from 'react';
+import { VerificationPaiementsSection } from './Components/VerificationPaiementsSection';
 
 export const SettingsAdminPage = () => {
-  const {logout } = useAuth();
+  const { logout } = useAuth();
 
   const {
     showSolde, solde, loadingSolde, toggleSolde,
     modeInfo, loadingMode, changeMode,
     sites, activeSite, changingSite, changeSite,
     odooLoading, loadEmployees, loadAttendances,
+    verifPaiementsLoading, verifierPaiementsEnCours,
   } = useSettingsAdmin();
 
   return (
@@ -28,9 +30,9 @@ export const SettingsAdminPage = () => {
             <SoldeSection solde={solde} visible={showSolde} loading={loadingSolde} onToggle={toggleSolde} />
             <ModePaiementSection info={modeInfo} loading={loadingMode} onChange={changeMode} />
             <SiteSection sites={sites} activeSite={activeSite} changing={changingSite} onChange={changeSite} />
+            <VerificationPaiementsSection loading={verifPaiementsLoading} onVerifier={verifierPaiementsEnCours} />
             <OdooSection loading={odooLoading} onLoadEmployees={loadEmployees} onLoadAttendances={loadAttendances} />
           </fieldset>
-
           <Button color="danger" outline onClick={() => logout()} disabled={odooLoading}>
             Se déconnecter
           </Button>

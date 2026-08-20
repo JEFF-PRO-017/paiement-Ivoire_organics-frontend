@@ -93,7 +93,7 @@ const DetailEmploye: React.FC = () => {
                                         listPlugin,
                                         multiMonthPlugin,
                                     ]}
-                                    initialView="multiMonthYear"
+                                    initialView="dayGridMonth"
                                     handleWindowResize={true}
                                     themeSystem="bootstrap"
                                     headerToolbar={{
@@ -105,6 +105,13 @@ const DetailEmploye: React.FC = () => {
                                     editable={true}
                                     selectable={true}
                                     eventClick={handleEventClick}
+                                    eventDidMount={(info) => {
+                                        const { statut_label, montant_journalier } = info.event.extendedProps;
+                                        info.el.setAttribute(
+                                            'title',
+                                            `Statut: ${statut_label} — Montant: ${fmt(parseFloat(montant_journalier))}`
+                                        );
+                                    }}
                                     locale="fr"
                                     buttonText={{
                                         month: 'Mois',

@@ -2,23 +2,36 @@ import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { settingsAdminService } from '../Services/SettingsAdminService';
 
-import { ModePaiementInfo, ModePaiementType } from '../types';
+import { ModePaiementInfo, ModePaiementType, SoldeData } from '../types';
 import { getAuthTokens, getUser, setUser } from 'pages/Authentication/utilis';
 import { settingsService } from 'pages/TableauBord/Services/SettingsService';
 
 export const useSettingsAdmin = () => {
   // ── Solde NotchPay ─────────────────────────────────────────────────────
   const [showSolde, setShowSolde] = useState(false);
-  const [solde, setSolde] = useState<number | null>(null);
+  const [solde, setSolde] = useState<SoldeData | null>(null);
   const [loadingSolde, setLoadingSolde] = useState(false);
+    // ── Vérification manuelle des paiements en cours ──────────────────────
+  const [verifPaiementsLoading, setVerifPaiementsLoading] = useState(false);
 
+    const verifierPaiementsEnCours = useCallback(async () => {
+    setVerifPaiementsLoading(true);
+    try {
+      await settingsAdminService.verifierPaiementsEnCours();
+      toast.success('Vérification des paiements en cours lancée avec succès');
+    } catch {
+      toast.error('Échec de la vérification des paiements en cours');
+    } finally {
+      setVerifPaiementsLoading(false);
+    }
+  }, []);
   // Affiche/masque le solde ; charge la valeur seulement au premier affichage
   const toggleSolde = useCallback(async () => {
     if (!showSolde && solde === null) {
       setLoadingSolde(true);
       try {
         const data = await settingsAdminService.getSolde();
-        setSolde(data.solde);
+        setSolde(data);
       } catch {
         toast.error('Impossible de charger le solde');
       } finally {
@@ -113,6 +126,6 @@ export const useSettingsAdmin = () => {
     showSolde, solde, loadingSolde, toggleSolde,
     modeInfo, loadingMode, changeMode,
     sites, activeSite, changingSite, changeSite,
-    odooLoading, loadEmployees, loadAttendances,
+    odooLoading, loadEmployees, loadAttendances, verifPaiementsLoading, verifierPaiementsEnCours,
   };
 };

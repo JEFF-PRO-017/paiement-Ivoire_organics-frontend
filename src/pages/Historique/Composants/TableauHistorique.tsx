@@ -1,20 +1,20 @@
 import React, { useMemo } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Badge, Button } from 'reactstrap';
+import { useNavigate } from 'react-router-dom';
+import { Badge } from 'reactstrap';
 import {
   createColumnHelper, flexRender,
   getCoreRowModel, getSortedRowModel,
   useReactTable, SortingState, OnChangeFn,
 } from '@tanstack/react-table';
 
-import { LignePaiement } from '../Hook/historique.types';
+import { Paiement } from '../Hook/historique.types';
 import { STATUT_CLR } from '../Hook/historique.constants';
 import Pagination from 'pages/Components/Pagination';
 import { fmtDate, fmt } from '../../Utils/Utils';
 import { NavItem } from 'pages/Utils/Utils.model';
 
 interface Props {
-  data: LignePaiement[];
+  data: Paiement[];
   totalCount: number;
   page: number;
   pageSize: number;
@@ -26,65 +26,69 @@ interface Props {
   onExportPDF: (id: number) => void;
 }
 
-const col = createColumnHelper<LignePaiement>();
+const col = createColumnHelper<Paiement>();
 
+// fallback si un statut renvoyé par le back n'est pas encore dans STATUT_CLR
+const statutColor = (statut: string) => STATUT_CLR[statut as keyof typeof STATUT_CLR] ?? 'secondary';
 
 const TableauHistorique: React.FC<Props> = ({
   data, totalCount, page, pageSize, totalPages,
   sorting, onSortingChange, onPageChange, onPageSizeChange, onExportPDF,
 }) => {
-
   const navigate = useNavigate();
 
-  // rows = vos données déjà chargées (la liste affichée dans le tableau)
-  // Adapter `r.portefeuille_id` et `r.employe.nom_complet` selon vos types réels.
-
-   const handleRowClick = (clickedRow: any, rows: any[]) => {
+  const handleRowClick = (clickedRow: Paiement, rows: Paiement[]) => {
     const queue: NavItem[] = rows.map(r => ({
-      id: r.portefeuille__id,       // ← l'id du portefeuille
-      nom: r.employe__nom_complet,   // ← le nom affiché dans la navbar
+      id: r.id,
+      nom: r.employe.nom_complet,
     }));
 
-    const index = rows.findIndex(r => r.portefeuille__id === clickedRow.portefeuille__id);
+    const index = rows.findIndex(r => r.id === clickedRow.id);
 
-    navigate(`/paiement/${clickedRow.portefeuille__id}`, {
+    navigate(`/paiement/${clickedRow.id}`, {
       state: { queue, index },
     });
   };
 
-  console.log('Rerender TableauHistorique', { data, totalCount, page, pageSize, totalPages, sorting });
   const columns = useMemo(() => [
     col.accessor('date_paiement', {
       header: 'Date',
       cell: ({ getValue }) => <span className="fw-medium">{fmtDate(getValue())}</span>,
     }),
-    col.accessor('employe__nom_complet', {
+    col.accessor(row => row.employe.nom_complet, {
+      id: 'employe_nom',
       header: 'Employé',
       cell: ({ row }) => (
         <div>
-          <div className="fw-medium">{row.original.employe__nom_complet}</div>
-          <small className="text-muted">{row.original.employe__id}</small>
+          <div className="fw-medium">{row.original.employe.nom_complet}</div>
+          <small className="text-muted">{row.original.employe.clientReferenceId}</small>
         </div>
       ),
     }),
-    col.accessor('employe__departement', {
+    col.accessor(row => row.employe.departement, {
+      id: 'departement',
       header: 'Département',
       cell: ({ getValue }) => <span className="text-muted">{getValue()}</span>,
     }),
-    col.accessor('nombre_jours', {
+    col.accessor(row => row.attendances?.length ?? 0, {
+      id: 'jours_payes',
       header: 'Jours payés',
       cell: ({ getValue }) => (
-        <Badge  className="bg-white-subtle text-white">{getValue()} j</Badge>
+        <Badge className="bg-white-subtle text-white">{getValue()} j</Badge>
       ),
     }),
-    col.accessor('montant_total', {
+    col.accessor('montant', {
       header: 'Montant',
-      cell: ({ getValue }) => <span className="fw-medium text-success">{fmt(getValue())}</span>,
+      cell: ({ getValue }) => <span className="fw-medium text-success">{fmt(Number(getValue()))}</span>,
     }),
-    col.accessor('portefeuille__statut', {
+    col.accessor('methode_paiement', {
+      header: 'Méthode',
+      cell: ({ getValue }) => <span className="text-muted">{getValue()}</span>,
+    }),
+    col.accessor('statut', {
       header: 'Statut',
       cell: ({ getValue }) => {
-        const c = STATUT_CLR[getValue()];
+        const c = statutColor(getValue());
         return <Badge color={c} className={`bg-${c}-subtle text-${c}`}>{getValue()}</Badge>;
       },
     }),
@@ -94,7 +98,7 @@ const TableauHistorique: React.FC<Props> = ({
       cell: ({ row }) => (
         <div className="d-flex gap-1">
           <button
-            onClick={() => handleRowClick(row.original, data)}  // ← passer la ligne cliquée et les données actuelles
+            onClick={() => handleRowClick(row.original, data)}
             className="btn btn-outline-primary btn-sm d-flex align-items-center gap-1"
           >
             <i className="ri-eye-line" />Détail
@@ -102,10 +106,10 @@ const TableauHistorique: React.FC<Props> = ({
         </div>
       ),
     }),
-  ], [onExportPDF]);
+  ], [data]);
 
   const table = useReactTable({
-    data: data ?? [],  // ← data au lieu de paginated
+    data: data ?? [],
     columns,
     state: { sorting },
     onSortingChange,
@@ -114,7 +118,6 @@ const TableauHistorique: React.FC<Props> = ({
     getRowId: row => String(row.id),
     manualPagination: true,
   });
-
 
   return (
     <>
@@ -143,7 +146,7 @@ const TableauHistorique: React.FC<Props> = ({
           <tbody>
             {table.getRowModel().rows?.length === 0 ? (
               <tr>
-                <td colSpan={7} className="text-center py-5 text-muted">
+                <td colSpan={columns.length} className="text-center py-5 text-muted">
                   <i className="ri-file-search-line display-6 d-block mb-2" />
                   Aucun résultat pour ces filtres
                 </td>

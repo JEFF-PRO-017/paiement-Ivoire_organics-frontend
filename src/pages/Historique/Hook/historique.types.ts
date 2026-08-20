@@ -6,18 +6,33 @@
   ══════════════════════════════════════════════════════════════════
 */
 
-import { StatutPortefeuille } from '../../Utils/types';
+import { AttendanceItem, Employe } from '../../Utils/types';
 
-export interface LignePaiement {
-  id:          number;
-  employe__nom_complet: string;
-  employe__id:  string;
-  employe__departement: string;
-  nombre_jours:       number;
-  montant_total:     number;
-  portefeuille__statut:      StatutPortefeuille;
-  portefeuille__id:          number;
-  date_paiement: string;
+type StatutPaiement = 'ENCOURS' | 'SUCCESS' | 'FAILED';
+type MethodePaiement = 'ORANGE_CIV' | 'MTN_MOMO_CIV';
+type TypePaiement = 'GROUPE' | 'AUTOMATIQUE' | 'DEMANDE';
+
+
+interface ReponseBrute {
+  status: string;
+  created: string;
+  payoutId: string;
+  [key: string]: unknown; // au cas où PawaPay renvoie des champs additionnels
+}
+export interface Paiement {
+  id: number;
+  employe: Employe;
+  date_paiement: string; // format "YYYY-MM-DD"
+  attendances: AttendanceItem[];
+  statut: StatutPaiement;
+  montant: string; // DecimalField → string côté DRF par défaut
+  phone_number: string;
+  methode_paiement: MethodePaiement;
+  type_paiement: TypePaiement;
+  reference: string;
+  reponse_brute: ReponseBrute | null;
+  date_envoi: string | null; // ISO datetime
+  date_confirmation: string | null; // ISO datetime
 }
 
 export interface StatsHistorique {

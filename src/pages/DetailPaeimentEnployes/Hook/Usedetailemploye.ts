@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { EmployeAttendanceGroup, AttendanceItem } from '../../Utils/types';
 import { NavItem } from 'pages/Utils/Utils.model';
 import { fmt } from 'pages/Utils/Utils';
-import { STATUT_COLOR } from './constants';
+import { STATUT_COLOR, STATUT_LABEL } from './constants';
 import { attendanceService } from 'pages/TableauBord/Services/AttendanceService';
 import { paiementService } from 'pages/TableauBord/Services/Service';
 
@@ -74,7 +74,7 @@ export const useDetailEmploye = (): UseDetailEmployeReturn => {
       setIsLoading(true);
       try {
         const data = await fetchGroup(employeId);
-        if (!cancelled) setGroup(data);
+        if (!cancelled) setGroup(data); console.log('group datat',data);
       } catch {
         if (!cancelled) toast.error('Impossible de charger le portefeuille');
       } finally {
@@ -116,15 +116,20 @@ export const useDetailEmploye = (): UseDetailEmployeReturn => {
   );
 
   // ── Calendrier : un événement par attendance, coloré selon son statut ───
-  const calendarEvents = useMemo((): CalendarEvent[] => {
-    return attendances.map((a: AttendanceItem) => ({
-      id: `attendance-${a.id}`,
-      title: `${a.statut_paiement} · ${fmt(parseFloat(a.montant_journalier))}`,
-      start: new Date(a.date),
-      allDay: true,
-      className: `bg-${STATUT_COLOR[a.statut_paiement] ?? 'secondary'}-subtle text-${STATUT_COLOR[a.statut_paiement] ?? 'secondary'} border-0`,
-    }));
-  }, [attendances]);
+const calendarEvents = useMemo((): CalendarEvent[] => {
+  return attendances.map((a: AttendanceItem) => ({
+    id: `attendance-${a.id}`,
+    title: `${fmt(parseFloat(a.montant_journalier))}`,
+    start: new Date(a.date),
+    allDay: true,
+    className: `bg-${STATUT_COLOR[a.statut_paiement] ?? 'secondary'}-subtle text-${STATUT_COLOR[a.statut_paiement] ?? 'secondary'} border-0`,
+    extendedProps: {
+      statut_paiement: a.statut_paiement,
+      statut_label: STATUT_LABEL[a.statut_paiement] ?? a.statut_paiement,
+      montant_journalier: a.montant_journalier,
+    },
+  }));
+}, [attendances]);
 
   // ── Actions groupées ─────────────────────────────────────────────────────
   const ouvrirConfirmation = (action: ConfirmationAction) => {
@@ -142,11 +147,9 @@ export const useDetailEmploye = (): UseDetailEmployeReturn => {
     try {
       if (confirmationAction === 'confirmer_rh') {
         await paiementService.confirmerRH(enAttenteIds);
-        toast.success(`${enAttenteIds.length} présence(s) confirmée(s) RH`);
       } else {
         // ⚠️ à créer côté service si absent : PATCH bulk statut_paiement -> 'PAYE'
         await attendanceService.payementManuel(enAttenteIds);
-        toast.success(`${impayeIds.length} présence(s) marquée(s) payée(s)`);
       }
       const refreshed = await fetchGroup(employeId);
       setGroup(refreshed);

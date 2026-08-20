@@ -127,28 +127,6 @@ const EmployeSidebar: React.FC<Props> = ({
               </button>
             </CardBody>
           </Card>
-
-          <CardBody className="bg-info-subtle mt-3 rounded-2">
-            <h6 className="text-muted fs-15 fw-medium mb-2">Légende du calendrier</h6>
-            <div className="d-flex flex-column gap-2">
-              <div className="d-flex align-items-center gap-2">
-                <span className="badge bg-warning-subtle text-warning fs-11 px-2">●</span>
-                <small className="text-muted">En attente de confirmation RH</small>
-              </div>
-              <div className="d-flex align-items-center gap-2">
-                <span className="badge bg-danger-subtle text-danger fs-11 px-2">●</span>
-                <small className="text-muted">Impayé (confirmé, en attente de paiement)</small>
-              </div>
-              <div className="d-flex align-items-center gap-2">
-                <span className="badge bg-info-subtle text-info fs-11 px-2">●</span>
-                <small className="text-muted">En cours (validation agrégateur)</small>
-              </div>
-              <div className="d-flex align-items-center gap-2">
-                <span className="badge bg-success-subtle text-success fs-11 px-2">●</span>
-                <small className="text-muted">Payé</small>
-              </div>
-            </div>
-          </CardBody>
         </SimpleBar>
       </div>
     </>

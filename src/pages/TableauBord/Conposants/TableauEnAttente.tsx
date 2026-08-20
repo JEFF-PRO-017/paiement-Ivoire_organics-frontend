@@ -112,7 +112,7 @@ const TableauEnAttente: React.FC<Props> = ({
       id: 'detail-modal', header: 'Détail',
       cell: ({ row }) => (
         <button
-          className="btn btn-outline-warning btn-sm d-flex align-items-center justify-content-center"
+          className="btn btn-outline-primary btn-sm d-flex align-items-center justify-content-center"
           title="Demander la création ou la suppression d'une présence"
           onClick={() => setModal(rows?.find(r => r.employe.id === row.original.employe.id) ?? null)}>
           <i className="ri-file-list-3-line" />

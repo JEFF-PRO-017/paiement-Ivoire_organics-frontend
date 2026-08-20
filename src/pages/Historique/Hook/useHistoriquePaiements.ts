@@ -3,12 +3,12 @@ import { toast } from 'react-toastify';
 import { SortingState, OnChangeFn } from '@tanstack/react-table';
 
 import { chipToDateRange } from './historique.constants';
-import { historiqueService, LignePaiement } from '../Services/Service';
-import { StatsHistorique, FiltresState } from './historique.types';
+import { historiqueService } from '../Services/Service';
+import { StatsHistorique, FiltresState, Paiement } from './historique.types';
 import { PaginatedResponse } from 'pages/Utils/types';
 
 export interface UseHistoriquePaiementsReturn {
-  rows: LignePaiement[];
+  rows: Paiement[];
   stats: StatsHistorique;
   isLoading: boolean;
 
@@ -39,7 +39,7 @@ const EMPTY_STATS: StatsHistorique = { total: 0, count: 0, moyenne: 0, employes:
 export const useHistoriquePaiements = (): UseHistoriquePaiementsReturn => {
 
   // ── State UI ───────────────────────────────────────────────────────────────
-  const [rows, setRows] = useState<LignePaiement[]>([]);
+  const [rows, setRows] = useState<Paiement[]>([]);
   const [stats, setStats] = useState<StatsHistorique>(EMPTY_STATS);
   const [isLoading, setIsLoading] = useState(true);
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -52,7 +52,7 @@ export const useHistoriquePaiements = (): UseHistoriquePaiementsReturn => {
 
   // ── Pagination ─────────────────────────────────────────────────────────────
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSizeRaw] = useState(10);
+  const [pageSize, setPageSizeRaw] = useState(5);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
 
@@ -65,7 +65,7 @@ export const useHistoriquePaiements = (): UseHistoriquePaiementsReturn => {
   ) => {
     setIsLoading(true);
     try {
-      const res: PaginatedResponse<LignePaiement> = await historiqueService.fetchPage(filtres, p, ps);
+      const res: PaginatedResponse<Paiement> = await historiqueService.fetchPage(filtres, p, ps);
       const data = res.data
       if (cancelled.current) return;
       setRows(data.results);

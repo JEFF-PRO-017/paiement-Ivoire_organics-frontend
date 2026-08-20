@@ -25,3 +25,13 @@ export const STATUT_COLOR: Record<string, string> = {
   EN_COURS_TRAITEMENT_CREATION:'secondary',
   EN_COURS_TRAITEMENT_SUPPRESION:'secondary',
 };
+
+export const STATUT_LABEL: Record<string, string> = {
+  EN_ATTENTE: 'En attente',
+  IMPAYE: 'Impayé',
+  EN_COURS: 'En cours',
+  PAYE: 'Payé',
+  EN_COURS_TRAITEMENT: 'En cours de traitement',
+  EN_COURS_TRAITEMENT_CREATION: 'En cours de traitement (création)',
+  EN_COURS_TRAITEMENT_SUPPRESION: 'En cours de traitement (suppression)',
+};

@@ -27,7 +27,7 @@ export const attendanceService = {
 
   
   payementManuel: (ids: number[]): Promise<any> =>
-    api.post('/api/pawa_pay/paiement-manuel/', {'employe_ids': ids}).then(r => r.data),
+    api.post('/api/pawa_pay/paiement_manuel/', {'employe_ids': ids}).then(r => r.data),
 
 };
 

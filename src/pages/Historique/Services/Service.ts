@@ -1,8 +1,7 @@
 import { api, downloadBlob, axiosBlob } from 'api/api';
-import { LignePaiement, FiltresState, StatsHistorique } from '../Hook/historique.types';
+import {  FiltresState, Paiement, StatsHistorique } from '../Hook/historique.types';
 import { PaginatedResponse } from 'pages/Utils/types';
 
-export type { LignePaiement };
 
 
 const filtresEnParams = (
@@ -31,17 +30,17 @@ export const historiqueService = {
     filtres:  Partial<FiltresState> = {},
     page     = 1,
     pageSize = 10,
-  ): Promise<PaginatedResponse<LignePaiement>> {
+  ): Promise<PaginatedResponse<Paiement>> {
     return api.get(`api/paiements/historique/?${filtresEnParams(filtres, page, pageSize)}`);
   },
 
-  async exporterCSV(lignes: LignePaiement[]): Promise<void> {
+  async exporterCSV(lignes: Paiement[]): Promise<void> {
     const header = 'Date,Employé,Matricule,Département,Jours,Montant,Statut\n';
     const rows   = lignes.map(l =>
       [
-        l.date_paiement, l.employe__nom_complet, l.employe__id,
-        l.employe__departement, l.nombre_jours, l.montant_total,
-        l.portefeuille__statut,
+        l.date_paiement, l.employe.nom_complet, l.employe.id,
+        l.employe.departement, l.attendances.length, l.montant,
+        l.statut,
       ].join(',')
     ).join('\n');
     downloadBlob(

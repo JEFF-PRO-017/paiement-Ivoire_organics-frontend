@@ -110,10 +110,10 @@ const TableauImpayes: React.FC<Props> = ({
       id: 'detail-navigate', header: 'Détail',
       cell: ({ row }) => (
         <button
-          className="btn btn-outline-danger btn-sm d-flex align-items-center justify-content-center"
+          className="btn btn-outline-primary btn-sm d-flex align-items-center justify-content-center"
           title="Voir la fiche détaillée de l'employé"
           onClick={() => handleRowClick(row.original, rows)}>
-          <i className="ri-bank-card-line" />
+          <i className="ri-user-line" />
         </button>
       ),
     }),
@@ -121,7 +121,7 @@ const TableauImpayes: React.FC<Props> = ({
       id: 'detail-modal', header: 'Détail',
       cell: ({ row }) => (
         <button
-          className="btn btn-outline-danger btn-sm d-flex align-items-center justify-content-center"
+          className="btn btn-outline-primary btn-sm d-flex align-items-center justify-content-center"
           title="Demander la création ou la suppression d'une présence"
           onClick={() => setModal(rows?.find(r => r.employe.id === row.original.employe.id) ?? null)}>
           <i className="ri-eye-line" />

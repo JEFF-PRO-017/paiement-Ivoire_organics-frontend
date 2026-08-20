@@ -83,6 +83,7 @@ export interface Employe {
   mobile_phone: string | null;
   operateur_mobile: string | null;
   notchpay_beneficiary_id: string | null;
+  clientReferenceId?:string
 }
 
 export interface AttendanceItem {

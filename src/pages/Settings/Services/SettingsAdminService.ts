@@ -1,20 +1,20 @@
 import { api } from 'api/api';
-import { SoldeNotchPay, ModePaiementInfo, ModePaiementType } from '../types';
+import {  ModePaiementInfo, ModePaiementType, SoldeData } from '../types';
 
 export const settingsAdminService = {
-  async getSolde(): Promise<SoldeNotchPay> {
-    const res = await api.get('/api/notch-pay/solde-notchpay/');
+  async getSolde(): Promise<SoldeData> {
+    const res = await api.get('/api/pawa_pay/solde_pawapay/');
       console.log('getModePaiement res', res);
     return res.data;
   },
 
   async getModePaiement(): Promise<ModePaiementInfo> {
-    const res = await api.get('/api/notch-pay/config-paiement/');
+    const res = await api.get('/api/pawa_pay/config_paiement/');
     return res.data;
   },
 
   async setModePaiement(mode: ModePaiementType): Promise<ModePaiementInfo> {
-    const res = await api.post('/api/notch-pay/config-paiement/', { mode });
+    const res = await api.post('/api/pawa_pay/config_paiement/', { mode });
     return res.data;
   },
 
@@ -28,4 +28,8 @@ export const settingsAdminService = {
       days_initial_attendance: daysInitialAttendance,
     });
   },
+  async verifierPaiementsEnCours ():Promise<void> {
+     return await api.get('api/pawa_pay/verifier_en_cours/').then(res => res.data)
+  }
+
 };
