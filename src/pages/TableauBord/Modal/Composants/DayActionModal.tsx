@@ -24,7 +24,7 @@ const DayActionModal: React.FC<Props> = ({
     </ModalBody>
     <ModalFooter>
       <Button color="light" onClick={onClose}>Annuler</Button>
-      {dayAction?.attendanceId && dayAction.statut==='EN_COURS_TRAITEMENT_SUPPRESION'? (
+      {dayAction?.attendanceId || dayAction?.statut === 'EN_COURS_TRAITEMENT_SUPPRESION' ? (
         <Button color="danger" onClick={onChoisirSupprimer}>
           <i className="ri-delete-bin-line align-middle me-1" />Supprimer la présence
         </Button>
