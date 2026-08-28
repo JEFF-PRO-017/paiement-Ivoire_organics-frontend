@@ -32,14 +32,14 @@ const ProfileDropdown = () => {
       <DropdownMenu className="dropdown-menu-end">
         <h6 className="dropdown-header">Welcome {u?.first_name}!</h6>
 
-        <DropdownItem className="p-0">
+        {/* <DropdownItem className="p-0">
           <Link to="/pages-profile" className="dropdown-item">
             <i className="mdi mdi-wallet text-muted fs-16 align-middle me-1" />{' '}
             <span className="align-middle">Balance : <b>$5971.67</b></span>
           </Link>
-        </DropdownItem>
+        </DropdownItem> */}
         <DropdownItem className="p-0">
-          <Link to="/pages-profile-settings" className="dropdown-item">
+          <Link to="/settings/admin" className="dropdown-item">
             <span className="badge bg-success-subtle text-success mt-1 float-end">New</span>
             <i className="mdi mdi-cog-outline text-muted fs-16 align-middle me-1" />{' '}
             <span className="align-middle">Settings</span>
