@@ -115,7 +115,7 @@ export const useHistoriquePaiements = (): UseHistoriquePaiementsReturn => {
 
   const handleExportPDF = async () => {
     try {
-      await historiqueService.exporterPDF({ search, dept, dateRange, activeChip, page });
+      await historiqueService.exporterPDF({ search, dept, dateRange, activeChip}, page,pageSize);
       toast.success('Export PDF téléchargé');
     } catch (e: any) {
       toast.info(e?.message ?? 'Export PDF non disponible');

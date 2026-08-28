@@ -6,13 +6,9 @@ const DEBOUNCE_MS = 500;
 
 const FullScreenDropdown = () => {
   // true = pas en plein écran (icône "entrer"), false = en plein écran (icône "sortir")
-  const [isFullScreenMode, setIsFullScreenMode] = useState(true);
+  const [isFullScreenMode, setIsFullScreenMode] = useState(getUser()?.setting?.zoom ?? true);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    const screenMode = getUser()?.setting?.zoom;
-    setIsFullScreenMode(screenMode ?? true);
-  }, []);
 
   // Enregistré une seule fois au montage, pas à chaque clic
   useEffect(() => {
@@ -48,6 +44,8 @@ const FullScreenDropdown = () => {
         });
     }, DEBOUNCE_MS);
   };
+
+
 
   const toggleFullscreen = () => {
     const doc = document as any;

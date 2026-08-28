@@ -17,6 +17,6 @@ export const settingsService = {
     // Ne plus avaler l'erreur ici : on laisse l'appelant décider (rollback,
     // toast global via loadingService, etc.). C'est le rôle de l'interceptor,
     // pas du service.
-    return api.patch('/api/front_settings/settings/', partial, config) as unknown as Promise<UserSettings>;
+    return api.patch('/api/front_settings/settings/', partial, { silentLoading: true, silentSuccess: true } as any) as unknown as Promise<UserSettings>;
   },
 };

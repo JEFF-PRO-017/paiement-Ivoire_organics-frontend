@@ -36,16 +36,17 @@ export interface Paiement {
 }
 
 export interface StatsHistorique {
-  total:    number;
-  count:    number;
-  moyenne:  number;
+  total: number;
+  count: number;
+  moyenne: number;
   employes: number;
 }
 
 export interface FiltresState {
-  search:     string;
-  dept:       string;
-  dateRange:  Date[];
+  search: string;
+  dept: string;
+  dateRange: Date[];
   activeChip: string;
-  page:       number;
+  page: number;
+  pageSize?: number
 }

@@ -11,11 +11,14 @@ interface LightDarkProps {
 const DEBOUNCE_MS = 500;
 
 const LightDark = ({ layoutMode, onChangeLayoutMode }: LightDarkProps) => {
-  const [mode, setMode] = useState<ApiThemeMode>('CLAIR');
+  const [mode, setMode] = useState<ApiThemeMode>(getUser()?.setting?.mode??'CLAIR');
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    console.log('je viens LECOMPOSNANT CLAR SOMBRE')
+
+  onChangeLayoutMode(apiModeToLayout(mode))
 
   useEffect(() => {
-    setMode(getUser()?.setting?.mode ?? 'CLAIR');
+    setMode(getUser()?.setting?.mode);
   }, [getUser]);
 
   // Nettoie le timeout en attente si le composant se démonte pendant le debounce
