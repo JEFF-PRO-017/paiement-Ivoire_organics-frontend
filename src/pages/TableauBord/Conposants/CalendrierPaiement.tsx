@@ -9,7 +9,6 @@ interface Props {
 }
 
 const CalendrierPaiement: React.FC<Props> = ({ joursCumules, historique }) => {
-  console.log('joursCumules', joursCumules, historique);
 
   const joursCumulesSet = useMemo(
     () => new Set(joursCumules.map(j => j.slice(0, 10))),

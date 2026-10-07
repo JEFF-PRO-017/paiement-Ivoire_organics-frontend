@@ -7,7 +7,6 @@ export const authService = {
     const res = await api.post('api/auth/login/', { email, password });
     const { auth, ...user } = res.data; // adapte si ta structure diffère
     setAuthTokens(auth);
-    console.log('auth',auth)
     return user as AuthUser;
   },
 

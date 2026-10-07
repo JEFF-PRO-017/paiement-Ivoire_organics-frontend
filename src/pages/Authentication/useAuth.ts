@@ -46,7 +46,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       await authService.logout();
     } catch (e) {
-      console.log(e);
     } finally {
       clearAuth();
       setLoading(false); // corrigé : était setLoading(true)

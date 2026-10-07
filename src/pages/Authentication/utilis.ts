@@ -112,7 +112,6 @@ export const refreshAccessToken = async (): Promise<string> => {
     .refresh(tokens.refreshToken)
     .then(({ accessToken, expirationTime }) => {
       setAuthTokens({ ...tokens, accessToken, expirationTime }); // refreshToken conservé
-      console.log('refresh good !')
       return accessToken;
     })
     .catch((err) => {

@@ -47,10 +47,8 @@ export const useSettingsAdmin = () => {
 
   // Charge le mode actuel au montage
   useEffect(() => {
-    console.log('useSettingsAdmin: loading mode de paiement...');
     settingsAdminService.getModePaiement()
       .then((r) => {
-        console.log('modeInfo', r);
         setModeInfo(r)
       })
       .catch(() => toast.error('Impossible de charger le mode de paiement'))

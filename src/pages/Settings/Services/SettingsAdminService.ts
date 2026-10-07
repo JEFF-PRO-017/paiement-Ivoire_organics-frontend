@@ -4,7 +4,6 @@ import {  ModePaiementInfo, ModePaiementType, SoldeData } from '../types';
 export const settingsAdminService = {
   async getSolde(): Promise<SoldeData> {
     const res = await api.get('/api/pawa_pay/solde_pawapay/');
-      console.log('getModePaiement res', res);
     return res.data;
   },
 

@@ -13,7 +13,6 @@ const DEBOUNCE_MS = 500;
 const LightDark = ({ layoutMode, onChangeLayoutMode }: LightDarkProps) => {
   const [mode, setMode] = useState<ApiThemeMode>(getUser()?.setting?.mode??'CLAIR');
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-    console.log('je viens LECOMPOSNANT CLAR SOMBRE')
 
   onChangeLayoutMode(apiModeToLayout(mode))
 

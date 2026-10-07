@@ -74,7 +74,7 @@ export const useDetailEmploye = (): UseDetailEmployeReturn => {
       setIsLoading(true);
       try {
         const data = await fetchGroup(employeId);
-        if (!cancelled) setGroup(data); console.log('group datat',data);
+        if (!cancelled) setGroup(data);
       } catch {
         if (!cancelled) toast.error('Impossible de charger le portefeuille');
       } finally {

@@ -242,11 +242,11 @@ const ModalDetailEmploye: React.FC<Props> = ({
                       <i className="ri-bank-card-line text-muted" />
                       {emp?.notchpay_beneficiary_id ? (
                         <Badge color="success" className="bg-success-subtle text-success">
-                          Bénéficiaire NotchPay lié
+                          Bénéficiaire PAWAPAY lié
                         </Badge>
                       ) : (
                         <Badge color="danger" className="bg-danger-subtle text-danger">
-                          Non lié NotchPay
+                          Non lié PAWAPAY
                         </Badge>
                       )}
                     </li>

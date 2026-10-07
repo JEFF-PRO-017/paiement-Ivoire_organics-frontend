@@ -41,7 +41,6 @@ const usePaginatedAttendances = (
   }, [fetchData]);
 
   const refetch = useCallback(() => fetchData(page, pageSize), [fetchData, page, pageSize]);
-  console.log('data',data)
 
   return { data, page, pageSize, handlePage, handlePageSize, refetch };
 };

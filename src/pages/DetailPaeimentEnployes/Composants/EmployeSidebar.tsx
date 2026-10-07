@@ -67,9 +67,9 @@ const EmployeSidebar: React.FC<Props> = ({
               <li className="d-flex align-items-center gap-2">
                 <i className="ri-bank-card-line text-muted" />
                 {employe.notchpay_beneficiary_id ? (
-                  <Badge className="bg-success-subtle text-success">Bénéficiaire NotchPay lié</Badge>
+                  <Badge className="bg-success-subtle text-success">Bénéficiaire PAWAPAY lié</Badge>
                 ) : (
-                  <Badge className="bg-danger-subtle text-danger">Non lié NotchPay</Badge>
+                  <Badge className="bg-danger-subtle text-danger">Non lié PAWAPAY</Badge>
                 )}
               </li>
             </ul>

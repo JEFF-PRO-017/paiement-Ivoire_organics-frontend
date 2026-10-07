@@ -15,7 +15,7 @@ interface Props {
 }
 
 /**
- * Affiche le solde NotchPay par pays/devise.
+ * Affiche le solde PAWAPAY par pays/devise.
  * Le solde est masqué par défaut (••••••) pour éviter l'affichage
  * accidentel d'informations sensibles ; il n'est chargé depuis l'API
  * qu'au premier clic sur "Afficher".
@@ -25,7 +25,7 @@ export const SoldeSection = ({ solde, visible, loading, onToggle }: Props) => (
     <CardBody>
       <div className="d-flex justify-content-between align-items-center mb-3">
         <CardTitle tag="h5" className="mb-0">
-          Solde NotchPay
+          Solde PAWAPAY
         </CardTitle>
 
         <Button
@@ -36,7 +36,7 @@ export const SoldeSection = ({ solde, visible, loading, onToggle }: Props) => (
           title={
             visible
               ? 'Masquer le solde à l\'écran'
-              : 'Afficher le solde (première consultation : chargement depuis NotchPay)'
+              : 'Afficher le solde (première consultation : chargement depuis PAWAPAY)'
           }
         >
           <FeatherIcon icon={visible ? 'eye-off' : 'eye'} size={18} />
