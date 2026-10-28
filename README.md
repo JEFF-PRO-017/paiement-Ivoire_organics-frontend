@@ -1,4 +1,4 @@
-# Mon App React
+# GESTION PAIEMENT FRONTEND
 
 Application React avec plusieurs pages (React Router) connectée à une API REST.
 
@@ -9,8 +9,6 @@ Application React avec plusieurs pages (React Router) connectée à une API REST
 - React (Create React App)
 - React Router
 - API REST (backend séparé)
-- Déploiement : Vercel
-
 ---
 
 ## Installation
@@ -28,8 +26,9 @@ npm install
 
 ## Variables d'environnement
 
-```env.production
-REACT_APP_API_URL=http://localhost:5000
+```
+.env.production
+REACT_APP_API_URL=http://
 ```
 
 > Ces variables sont visibles dans le navigateur. Ne jamais y mettre de mot de passe ou de clé secrète.
