@@ -39,16 +39,21 @@ const TableauHistorique: React.FC<Props> = ({
 
   const handleRowClick = (clickedRow: Paiement, rows: Paiement[]) => {
     const queue: NavItem[] = rows.map(r => ({
-      id: r.id,
+      id: r.employe.id,
       nom: r.employe.nom_complet,
     }));
 
-    const index = rows.findIndex(r => r.id === clickedRow.id);
+    // filter les doublons si un employé a plusieurs paiements dans la liste
+    const uniqueQueue = queue.filter((item, index, self) =>
+      index === self.findIndex((t) => t.id === item.id)
+    );
+    const index = uniqueQueue.findIndex(r => r.id === clickedRow.employe.id);
 
-    navigate(`/paiement/${clickedRow.id}`, {
-      state: { queue, index },
+    navigate(`/paiement/${clickedRow.employe.id}`, {
+      state: { queue: uniqueQueue, index },
     });
-  };
+  }
+
 
   const columns = useMemo(() => [
     col.accessor('date_paiement', {
